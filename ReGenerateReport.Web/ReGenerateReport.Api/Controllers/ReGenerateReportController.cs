@@ -81,19 +81,27 @@ namespace ReGenerateReport.Api.Controllers
                                 {
                                     if (HttpResponse.Content.Headers.ContentType.MediaType.ToString() == "application/pdf")
                                     {
-                                        return File(await HttpResponse.Content.ReadAsByteArrayAsync(), "application/pdf", "");
+                                        //return File(await HttpResponse.Content.ReadAsByteArrayAsync(), "application/pdf", "");
+                                        Result.Status = HttpResponse.ReasonPhrase;
+                                        Result.StatusCode = ((int)HttpResponse.StatusCode).ToString();
+                                        Result.ContentFile = await HttpResponse.Content.ReadAsByteArrayAsync();
+                                        Result.ContentType = HttpResponse.Content.Headers.ContentType.MediaType.ToString();
                                     }
                                     else
                                     {
-                                        return Json(await HttpResponse.Content.ReadAsStringAsync());
+                                        Result.Status = HttpResponse.ReasonPhrase;
+                                        Result.StatusCode = ((int)HttpResponse.StatusCode).ToString();
+                                        Result.Json = Json(await HttpResponse.Content.ReadAsStringAsync());
+                                        Result.ContentType = HttpResponse.Content.Headers.ContentType.MediaType.ToString();
+                                        //return Json(await HttpResponse.Content.ReadAsStringAsync());
                                     }
                                 }
                                 else
                                 {
                                     Result.Status = HttpResponse.ReasonPhrase;
                                     Result.StatusCode = ((int)HttpResponse.StatusCode).ToString();
-                                    return StatusCode((int)HttpResponse.StatusCode, Result);
                                 }
+                                return StatusCode((int)HttpResponse.StatusCode, Result);
                             }
                         }
                         else if (true)

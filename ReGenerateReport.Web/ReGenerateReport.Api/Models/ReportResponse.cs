@@ -10,6 +10,7 @@ namespace ReGenerateReport.Api.Models
         public string StatusCode { get; set; }
         public string Status { get; set; }
         public byte[] ContentFile { get; set; }
-        public string Json { get; set; }
+        public object Json { get; set; }
+        public string ContentType { get; set; }
     }
 }
