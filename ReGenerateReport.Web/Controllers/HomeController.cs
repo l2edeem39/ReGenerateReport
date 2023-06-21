@@ -40,7 +40,7 @@ namespace ReGenerateReport.Web.Controllers
             return View();
         }
 
-        public async Task<WebPageResponse> PdfPartial(string strMethodName, string strUrl, string strJson)
+        public async Task<WebPageResponse> PdfPartial(string strMethodName, string strUrl, string strJson, string strUser)
         {
             WebPageResponse WebResult = new WebPageResponse();
             string imageBase64Data = null;
@@ -52,7 +52,7 @@ namespace ReGenerateReport.Web.Controllers
             try
             {
                 
-                Task<ReportResponse> Result = SendCallApi("POST", "https://hqcapidev.viriyah.co.th/ItextGenerateDoc/api/GeneratePDF", "{\"key\":\"@EndosNo='23181/END/000013-580'\",\"templateId\":\"NE02\",\"generateType\":\"2\"}");
+                Task<ReportResponse> Result = SendCallApi("POST", "https://hqcapidev.viriyah.co.th/ItextGenerateDoc/api/GeneratePDF", "{\"key\":\"@EndosNo='23181/END/000013-580'\",\"templateId\":\"NE02\",\"generateType\":\"2\"}", "R3BM651170", "");
                 if (Result != null && Result.Result.statusCode != null && Result.Result.statusCode != "")
                 {
                     if (Result.Result.contentType != null && Result.Result.contentType != "")
@@ -79,7 +79,7 @@ namespace ReGenerateReport.Web.Controllers
             return WebResult;
         }
 
-        public async Task<ReportResponse> SendCallApi(string strMethodName, string strUrl, string strJson)
+        public async Task<ReportResponse> SendCallApi(string strMethodName, string strUrl, string strJson, string Username, string Password)
         {
             try
             {
@@ -95,6 +95,7 @@ namespace ReGenerateReport.Web.Controllers
                         RequestData.strUrl = strUrl.ToString();
                         string JsonRequest = JsonConvert.SerializeObject(RequestData);
                         StringContent content = new StringContent(JsonRequest, Encoding.UTF8, "application/json");
+                        client.DefaultRequestHeaders.Add("Authorization", $"Basic {Base64Encode($"{Username}:{Password}")}");
                         using (HttpResponseMessage HttpResponse = client.PostAsync(Endpoint, content).Result)
                         {
                             if (HttpResponse.StatusCode == HttpStatusCode.OK)
@@ -135,6 +136,11 @@ namespace ReGenerateReport.Web.Controllers
             }
         }
 
+        public static string Base64Encode(string textToEncode)
+        {
+            byte[] textAsBytes = Encoding.UTF8.GetBytes(textToEncode);
+            return Convert.ToBase64String(textAsBytes);
+        }
 
         public IActionResult Privacy()
         {
