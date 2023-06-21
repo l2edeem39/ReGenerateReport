@@ -22,11 +22,13 @@ namespace ReGenerateReport.Api.Controllers
     {
         private readonly IConfiguration _config;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly Service.IUserService _userRepository;
 
-        public ReGenerateReportController(IConfiguration config, IHttpContextAccessor httpContextAccessor)
+        public ReGenerateReportController(IConfiguration config, IHttpContextAccessor httpContextAccessor, Service.IUserService IUserService)
         {
             _config = config;
             _httpContextAccessor = httpContextAccessor;
+            _userRepository = IUserService;
         }
 
         [Route("api/1.0/ReGenerateReport")]
@@ -35,34 +37,30 @@ namespace ReGenerateReport.Api.Controllers
         {
             ReportResponse Result = new ReportResponse();
 
-            //if (!Request.Headers.ContainsKey("Authorization"))
-            //{
-            //    Result.Status = "Unauthorized";
-            //    Result.StatusCode = "401";
-            //    return StatusCode(401, Result);
-            //}
-            //string authHeader = Request.Headers["Authorization"];
-            //byte[] authBytes = Convert.FromBase64String(authHeader.Replace("Authorization", "").Substring("Basic ".Length));
-            //string authString = Encoding.UTF8.GetString(authBytes);
-            //string[] authArray = authString.Split(':');
-            //string username = authArray[0];
-            //string password = authArray[1];
+            if (!Request.Headers.ContainsKey("Authorization"))
+            {
+                Result.Status = "Unauthorized";
+                Result.StatusCode = "401";
+                Result.ContentType = "error";
+                return StatusCode(401, Result);
+            }
+            string authHeader = Request.Headers["Authorization"];
+            byte[] authBytes = Convert.FromBase64String(authHeader.Replace("Authorization", "").Substring("Basic ".Length));
+            string authString = Encoding.UTF8.GetString(authBytes);
+            string[] authArray = authString.Split(':');
+            string username = authArray[0];
+            string password = authArray[1];
 
-            //if (_userRepository.ValidateCredentials(username, password))
-            //{
+            if (!_userRepository.ValidateCredentials(username, password))
+            {
+                Result.Status = "Unauthorized";
+                Result.StatusCode = "401";
+                Result.ContentType = "error";
+                return StatusCode(401, Result);
+            }
+
             try
             {
-
-                //var pol_br = Parameter.policyNumber.Length > 5 ? Parameter.policyNumber.Substring(2, 3) : "";
-                //if (_httpContextAccessor.HttpContext.Session.GetString("UserBranch").ToString().Trim() != pol_br)
-                //{
-                //    Result.Status = "Unauthorized : Branch is invalid.";
-                //    Result.StatusCode = "401";
-                //    return StatusCode(401, Result);
-                //}
-                //var url = _config.GetSection("DefaultUrlReport").Value.ToString();
-                //var templateId = _config.GetSection("TemplateName")[Parameter.templateName.ToString().Replace(" ", "")].ToString();
-
                 using (MemoryStream ms = new MemoryStream())
                 {
                     using (var client = new HttpClient())
@@ -71,7 +69,7 @@ namespace ReGenerateReport.Api.Controllers
                         ReportRequest RequestData = new ReportRequest();
                         RequestData.json.strJson = Parameter.strJson.ToString();
                         string JsonRequest = RequestData.json.strJson;// JsonConvert.SerializeObject(RequestData);
-                        
+
                         if (Parameter.strMethodName.ToUpper() == "POST")
                         {
                             StringContent content = new StringContent(JsonRequest, Encoding.UTF8, "application/json");                     //Call API
@@ -136,6 +134,7 @@ namespace ReGenerateReport.Api.Controllers
                 //return File(Result.ContentFile.ToArray(), "application/pdf", "");
                 Result.Status = ex.Message;
                 Result.StatusCode = "500";
+                Result.ContentType = "error";
                 return StatusCode(500, Result);
             }
         }
