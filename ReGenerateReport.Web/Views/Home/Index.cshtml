@@ -2,7 +2,159 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@{
+    Layout = null;
+}
+
+@Html.ActionLink("View Image", "PdfPartial")
+
+<!DOCTYPE html>
+
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <style type="text/css">
+        body {
+            font-family: Arial;
+            font-size: 10pt;
+        }
+
+        table {
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+        }
+
+            table th {
+                background-color: #F7F7F7;
+                color: #333;
+                font-weight: bold;
+            }
+
+            table th, table td {
+                padding: 5px;
+                border: 1px solid #ccc;
+            }
+
+        #pdf_container {
+            background: #ccc;
+            text-align: center;
+            display: none;
+            padding: 5px;
+            height: 820px;
+            overflow: auto;
+        }
+    </style>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/js/bootstrap.js" />
+</head>
+<body>
+    <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Index">
+        <table id="tblFiles" cellpadding="0" cellspacing="0">
+            <tr>
+                <th style="width:120px">HostName</th>
+            </tr>
+            <tr>
+                <td>@ViewBag.HostName</td>
+                <td><a class="view" href="javascript:;" rel='test'>View PDF</a></td>
+            </tr>
+        </table>
+    </form>
+    <input type="submit" class="view" value="hhh" />
+    <hr />
+
+    <hr />
+    <div id="pdf_container"></div>
+    <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="~/lib/pdf/pdf.min.js"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/pdf_viewer.min.css" type="text/css" />
+
+    <script type="text/javascript">
+        $(function () {
+            $(".view").click(function () {
+                var fileId = $(this).attr("test");
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/PdfPartial",
+                    data: { "fileId": fileId },
+                    success: function (r) {
+                        //Convert Base64 string to Byte Array.
+                        //alert(r);
+                        var bytes = Base64ToBytes(r);
+
+                        LoadPdfFromBlob(bytes);
+                    },
+                    failure: function (response) {
+                        alert("1");
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            });
+        });
+
+        var pdfjsLib = window['pdfjs-dist/build/pdf'];
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js';
+        var pdfDoc = null;
+        var scale = 1; //Set Scale for zooming PDF.
+        var resolution = 1; //Set Resolution to Adjust PDF clarity.
+
+        function LoadPdfFromBlob(blob) {
+            //Read PDF from BLOB.
+            pdfjsLib.getDocument({ data: blob }).promise.then(function (pdfDoc_) {
+                pdfDoc = pdfDoc_;
+
+                //Reference the Container DIV.
+                var pdf_container = document.getElementById("pdf_container");
+                pdf_container.innerHTML = "";
+                pdf_container.style.display = "block";
+
+                //Loop and render all pages.
+                for (var i = 1; i <= pdfDoc.numPages; i++) {
+                    RenderPage(pdf_container, i);
+                }
+            });
+        };
+        function RenderPage(pdf_container, num) {
+            pdfDoc.getPage(num).then(function (page) {
+                //Create Canvas element and append to the Container DIV.
+                var canvas = document.createElement('canvas');
+                canvas.id = 'pdf-' + num;
+                ctx = canvas.getContext('2d');
+                pdf_container.appendChild(canvas);
+
+                //Create and add empty DIV to add SPACE between pages.
+                var spacer = document.createElement("div");
+                spacer.style.height = "20px";
+                pdf_container.appendChild(spacer);
+
+                //Set the Canvas dimensions using ViewPort and Scale.
+                var viewport = page.getViewport({ scale: scale });
+                canvas.height = resolution * viewport.height;
+                canvas.width = resolution * viewport.width;
+
+                //Render the PDF page.
+                var renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport,
+                    transform: [resolution, 0, 0, resolution, 0, 0]
+                };
+
+                page.render(renderContext);
+            });
+        };
+
+        function Base64ToBytes(base64) {
+            var s = window.atob(base64);
+            var bytes = new Uint8Array(s.length);
+            for (var i = 0; i < s.length; i++) {
+                bytes[i] = s.charCodeAt(i);
+            }
+            return bytes;
+        };
+    </script>
+
+</body>
+</html>
