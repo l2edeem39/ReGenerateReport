@@ -44,9 +44,26 @@
 </head>
 <body>
     <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Index">
-        <a class="view" href="javascript:;" rel='test'>View PDF</a>
+        <table id="tblFiles" cellpadding="0" cellspacing="0">
+            <tr>
+                <th style="width:120px">File Name</th>
+                <th style="width:80px"></th>
+            </tr>
+            <tr>
+                <td>test</td>
+                <td><a class="view" href="javascript:;" rel='test'>View PDF</a></td>
+            </tr>
+            @*@foreach (var file in Model)
+        {
+            <tr>
+                <td>@file.Name</td>
+                <td><a class="view" href="javascript:;" rel='@file.Id'>View PDF</a></td>
+            </tr>
+        }*@
+        </table>
     </form>
     <hr />
+    
     <hr />
     <div id="pdf_container"></div>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
