@@ -10,6 +10,7 @@ namespace ReGenerateReport.Web.Models
         public string statusCode { get; set; }
         public string status { get; set; }
         public string contentFile { get; set; }
+        public string contentFilePreview { get; set; }
         public string json { get; set; }
         public string contentType { get; set; }
     }

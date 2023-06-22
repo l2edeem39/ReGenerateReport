@@ -44,7 +44,9 @@ namespace ReGenerateReport.Web.Controllers
         {
             WebPageResponse WebResult = new WebPageResponse();
             string imageBase64Data = null;
+            string imageDataURL = null;
             WebResult.contentFile = imageBase64Data;
+            WebResult.contentFilePreview = imageDataURL;
             WebResult.contentType = "error";
             WebResult.json = "";
             WebResult.status = "Internal Server";
@@ -52,7 +54,7 @@ namespace ReGenerateReport.Web.Controllers
             try
             {
                 
-                Task<ReportResponse> Result = SendCallApi("POST", "https://hqcapidev.viriyah.co.th/ItextGenerateDoc/api/GeneratePDF", "{\"key\":\"@EndosNo='23181/END/000013-580'\",\"templateId\":\"NE02\",\"generateType\":\"2\"}", "R3BM651170", "");
+                Task<ReportResponse> Result = SendCallApi(strMethodName, strUrl, strJson, strUser, "");
                 if (Result != null && Result.Result.statusCode != null && Result.Result.statusCode != "")
                 {
                     if (Result.Result.contentType != null && Result.Result.contentType != "")
@@ -62,9 +64,11 @@ namespace ReGenerateReport.Web.Controllers
                             var byteA = Result.Result.contentFile;
                             var imageBytes = Convert.FromBase64String(byteA);
                             imageBase64Data = Convert.ToBase64String(imageBytes);
+                            imageDataURL = string.Format("data:application/pdf;base64,{0}", imageBase64Data);
                         }
                     }
                     WebResult.contentFile = imageBase64Data;
+                    WebResult.contentFilePreview = imageDataURL;
                     WebResult.contentType = Result.Result.contentType;
                     WebResult.status = Result.Result.status;
                     WebResult.statusCode = Result.Result.statusCode;

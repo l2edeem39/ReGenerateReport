@@ -2,11 +2,8 @@
     ViewData["Title"] = "Home Page";
 }
 
-@{
-    Layout = null;
-}
 
-@Html.ActionLink("View Image", "PdfPartial")
+@*@Html.ActionLink("View Image", "PdfPartial")*@
 
 <!DOCTYPE html>
 
@@ -45,53 +42,179 @@
             height: 820px;
             overflow: auto;
         }
+
+        .gap-3 {
+            margin-top: 10px
+        }
+
+        .stayleft {
+            margin-left: 1px
+        }
+
+        iframe {
+            border: 0;
+            bottom: 0;
+            height: 0px;
+            left: 0;
+            margin: 0;
+            padding: 0;
+            right: 0;
+            top: 0;
+            width: 100%;
+        }
+
+        .txt {
+            /*font-weight: bold;
+            font-family: "Times New Roman", Times, serif;*/
+            font-style: normal;
+        }
     </style>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/js/bootstrap.js" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/pdf_viewer.min.css" type="text/css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-grid.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/switch-toggle.css" />
+
 </head>
 <body>
-    <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Index">
-        <table id="tblFiles" cellpadding="0" cellspacing="0">
-            <tr>
-                <th style="width:120px">HostName</th>
-            </tr>
-            <tr>
-                <td>@ViewBag.HostName</td>
-                <td><a class="view" href="javascript:;" rel='test'>View PDF</a></td>
-            </tr>
-        </table>
-    </form>
-    <input type="submit" class="view" value="hhh" />
+    <br />
+    <div class="container">
+        <div class="form-group gap-3">
+            <span>UserName : </span><span style="color:red;font-weight: bold;">@ViewBag.HostName</span>
+            <input id="txtUserName" type="text" value=@ViewBag.HostName style="display:none" />
+        </div>
+        <div class="row gap-3">
+            <div class="col-sm-2 gap-3">
+                <label class="mr-sm-2 sr-only" for="inlineFormCustomSelect">Preference</label>
+                <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                    <option value="1" selected>POST</option>
+                </select>
+            </div>
+            <div class="col-sm-8 gap-3">
+                <input type="text" class="form-control" id="txtURL" placeholder="URL">
+            </div>
+            <div class="col-sm-2 gap-3">
+                <button type="submit" id="getData" class="btn btn-primary col-sm-12">Send...</button>
+            </div>
+        </div>
+        <div class="form-group gap-3" style="margin-top:20px">
+            <div class="row">
+                <div class="col-sm-6">
+                    <label for="exampleFormControlTextarea1">JSON Body</label>
+                </div>
+                <div class="col-sm-6" style="text-align:right">
+                    <button id="preview" type="button" class="btn btn-outline-secondary btn-sm" style="display:;margin-bottom:5px" onclick="printTheJSONInPrettyFormat()">Beautify</button>
+                </div>
+            </div>
+            <textarea class="form-control" id="prettyJSONFormat" rows="8"></textarea>
+        </div>
+    </div>
     <hr />
+    <div class="container" style="display:none">
+        <div class="row">
+            <div class="col-md-6 pull-left">
+                <label class="switch">
+                    <input id="chkPreview" type="checkbox" class="default">
+                    <span class="slider"></span>
+                </label>
+                <span style="margin-left:20px">Preview</span>
+            </div>
+            <div class="col-sm-6" style="text-align:right">
+                <button id="download" type="button" class="btn btn-outline-primary btn-sm" style="display:none;margin-bottom:5px">Download</button>
+            </div>
+        </div>
+    </div>
 
-    <hr />
+    <div class="container">
+        <div class="row">
+            <div id="divResponsePrettyJSONFormatLabel" class="col-md-12">
+                <label for="exampleFormControlTextarea12" class="txt">Response</label>
+                <label id="txtResponse" style="color:red"></label>
+            </div>
+        </div>
+        <div class="row">
+            <div id="divResponsePrettyJSONFormat" class="col-md-12">
+                <textarea class="form-control" id="responsePrettyJSONFormat" rows="10" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="col-md-12">
+            <iframe id="ifrmDisplay" src=""></iframe>
+        </div>
+    </div>
+
     <div id="pdf_container"></div>
     <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="~/lib/pdf/pdf.min.js"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/pdf_viewer.min.css" type="text/css" />
 
     <script type="text/javascript">
         $(function () {
-            $(".view").click(function () {
+            $("#getData").click(function () {
                 var fileId = $(this).attr("test");
+                //document.getElementById("ifrmDisplay").style.display = "none"
                 $.ajax({
                     type: "POST",
                     url: "/Home/PdfPartial",
-                    data: { "fileId": fileId },
+                    data: {
+                        strMethodName: "POST",
+                        strUrl: document.getElementById('txtURL').value,
+                        strJson: document.getElementById('prettyJSONFormat').value,
+                        strUser: document.getElementById('txtUserName').value
+                    },
                     success: function (r) {
-                        //Convert Base64 string to Byte Array.
-                        //alert(r);
-                        var bytes = Base64ToBytes(r);
-
-                        LoadPdfFromBlob(bytes);
+                        //console.log(r);
+                        //var chkBox = document.getElementById("chkPreview").checked;
+                        //console.log(chkBox);
+                        //if (r.contentFile != null && !chkBox) {
+                        //    document.getElementById("download").style.display = ''
+                        //    var bytes = Base64ToBytes(r.contentFile);
+                        //    LoadPdfFromBlob(bytes);
+                        //} else 
+                        if (r.statusCode == 200) {
+                            if (r.contentType == 'application/pdf') {
+                                document.getElementById('ifrmDisplay').src = r.contentFilePreview;
+                                document.getElementById('ifrmDisplay').style.height = '1000px'
+                                document.getElementById("divResponsePrettyJSONFormat").style.display = "none"
+                                document.getElementById("txtResponse").innerHTML = ''
+                            } else if (r.contentType == 'text/plain') {
+                                document.getElementById("divResponsePrettyJSONFormat").style.display = ""
+                                document.getElementById('ifrmDisplay').style.height = '0px'
+                                document.getElementById("responsePrettyJSONFormat").value = r.json;
+                                printTheJSONInPrettyFormat2();
+                                document.getElementById("txtResponse").innerHTML = ''
+                            }
+                        }
+                        else {
+                            var msg = r.statusCode + ' ' + r.status;
+                            document.getElementById("txtResponse").innerHTML = ' Status ' + msg;
+                            document.getElementById('ifrmDisplay').style.height = '0px'
+                            document.getElementById("responsePrettyJSONFormat").value = '';
+                        }
+                        
+                        console.log(r);
                     },
                     failure: function (response) {
-                        alert("1");
+                        alert("Error");
                     },
                     error: function (response) {
-                        alert(response.responseText);
+                        //alert(response.responseText);
+                        alert("Error");
                     }
                 });
+            });
+        });
+
+        $(function () {
+            $("#chkPreview").click(function () {
+                if (document.getElementById("chkPreview").checked) {
+                    document.getElementById("pdf_container").style.display = "none"
+                    document.getElementById("ifrmDisplay").style.display = ""
+                } else {
+                    document.getElementById("ifrmDisplay").style.display = "none"
+                    document.getElementById("pdf_container").style.display = ""
+                }
             });
         });
 
@@ -154,6 +277,25 @@
             }
             return bytes;
         };
+
+        function printTheJSONInPrettyFormat() {
+            var badJSON = document.getElementById('prettyJSONFormat').value;
+            var parseJSON = JSON.parse(badJSON);
+            var JSONInPrettyFormat = JSON.stringify(parseJSON, undefined, 4);
+            document.getElementById('prettyJSONFormat').value =
+                JSONInPrettyFormat;
+        }
+
+        function printTheJSONInPrettyFormat2() {
+            var badJSON = document.getElementById('responsePrettyJSONFormat').value;
+            if (badJSON != null && badJSON != "") {
+                var parseJSON = JSON.parse(badJSON);
+                var JSONInPrettyFormat = JSON.stringify(parseJSON, undefined, 4);
+                document.getElementById('responsePrettyJSONFormat').value =
+                    JSONInPrettyFormat;
+            }
+        }
+
     </script>
 
 </body>
