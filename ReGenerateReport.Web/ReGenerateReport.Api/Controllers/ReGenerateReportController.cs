@@ -17,7 +17,6 @@ namespace ReGenerateReport.Api.Controllers
 {
     //[Authorize]
     [ApiController]
-    [Route("[controller]")]
     public class ReGenerateReportController : Controller
     {
         private readonly IConfiguration _config;
@@ -31,7 +30,7 @@ namespace ReGenerateReport.Api.Controllers
             _userRepository = IUserService;
         }
 
-        [Route("api/1.0/ReGenerateReport")]
+        [Route("api/ReGenerateReport")]
         [HttpPost]
         public async Task<IActionResult> ReGenerateReport([FromBody] ReportRequestParameter Parameter)
         {

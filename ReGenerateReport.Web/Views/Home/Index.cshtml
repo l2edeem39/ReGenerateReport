@@ -94,7 +94,7 @@
                 <input type="text" class="form-control" id="txtURL" placeholder="URL">
             </div>
             <div class="col-sm-2 gap-3">
-                <button type="submit" id="getData" class="btn btn-primary col-sm-12">Send...</button>
+                <button type="submit" id="getData" class="btn btn-primary col-sm-12" onclick="GetData()">Send...</button>
             </div>
         </div>
         <div class="form-group gap-3" style="margin-top:20px">
@@ -149,9 +149,64 @@
     <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="~/lib/pdf/pdf.min.js"></script>
 
+
     <script type="text/javascript">
+        function GetData() {
+            //alert('asda');
+
+            var strMethodName = "POST"
+            var strUrl = document.getElementById('txtURL').value
+            var strJson = document.getElementById('prettyJSONFormat').value
+            var strUser = document.getElementById('txtUserName').value
+
+            var url = "@Url.Action("PdfPartial", "Home")" + "?strMethodName=" + strMethodName + "&strUrl=" + strUrl + "&strJson=" + strJson + "&strUser=" + strUser + "";
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+
+            xhr.onreadystatechange = function (e) {
+                if (this.status == 200) {
+                    if (this.readyState == 4) {
+                        console.log(this)
+                        console.log(xhr)
+                        var res = JSON.parse(xhr.response);
+
+                        if (res.statusCode == 200) {
+                            if (res.contentType == 'application/pdf') {
+                                document.getElementById('ifrmDisplay').src = res.contentFilePreview;
+                                document.getElementById('ifrmDisplay').style.height = '1000px'
+                                document.getElementById("divResponsePrettyJSONFormat").style.display = "none"
+                                document.getElementById("txtResponse").innerHTML = ''
+                            } else if (res.contentType == 'text/plain') {
+                                document.getElementById("divResponsePrettyJSONFormat").style.display = ""
+                                document.getElementById('ifrmDisplay').style.height = '0px'
+                                document.getElementById("responsePrettyJSONFormat").value = res.json;
+                                printTheJSONInPrettyFormat2();
+                                document.getElementById("txtResponse").innerHTML = ''
+                            }
+                        }
+                        else {
+                            var msg = res.statusCode + ' ' + res.status;
+                            document.getElementById("txtResponse").innerHTML = ' Status ' + msg;
+                            document.getElementById('ifrmDisplay').style.height = '0px'
+                            document.getElementById("responsePrettyJSONFormat").value = '';
+                        }
+                    }
+                }
+                else {
+                    var resError = JSON.parse(xhr.response);
+                    var msg = resError.statusCode + ' ' + resError.status;
+                    document.getElementById("txtResponse").innerHTML = ' Status ' + msg;
+                    document.getElementById('ifrmDisplay').style.height = '0px'
+                    document.getElementById("responsePrettyJSONFormat").value = '';
+                }
+
+            };
+            xhr.send();
+        }
+
         $(function () {
-            $("#getData").click(function () {
+            $("#getData11").click(function () {
                 var fileId = $(this).attr("test");
                 //document.getElementById("ifrmDisplay").style.display = "none"
                 $.ajax({
@@ -171,7 +226,7 @@
                         //    document.getElementById("download").style.display = ''
                         //    var bytes = Base64ToBytes(r.contentFile);
                         //    LoadPdfFromBlob(bytes);
-                        //} else 
+                        //} else
                         if (r.statusCode == 200) {
                             if (r.contentType == 'application/pdf') {
                                 document.getElementById('ifrmDisplay').src = r.contentFilePreview;
@@ -192,15 +247,16 @@
                             document.getElementById('ifrmDisplay').style.height = '0px'
                             document.getElementById("responsePrettyJSONFormat").value = '';
                         }
-                        
+
                         console.log(r);
                     },
                     failure: function (response) {
-                        alert("Error");
+                        alert("Error 1");
                     },
                     error: function (response) {
                         //alert(response.responseText);
-                        alert("Error");
+                        alert("Error 2");
+                        console.log(response);
                     }
                 });
             });

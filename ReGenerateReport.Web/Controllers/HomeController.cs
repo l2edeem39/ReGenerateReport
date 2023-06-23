@@ -31,7 +31,13 @@ namespace ReGenerateReport.Web.Controllers
             //Task<ReportResponse> Result = PdfPartial("POST", "https://hqcapidev.viriyah.co.th/ItextGenerateDoc/api/GeneratePDF", "{\"key\":\"@EndosNo='23181/END/000013-580'\",\"templateId\":\"NE02\",\"generateType\":\"2\"}");
             //var byteA = Result.Result.ContentFile;
             //var imageBytes = Convert.FromBase64String(byteA);
-            String hostName = Dns.GetHostName();
+            //String hostName = Dns.GetHostName();
+            var hostEntry = Dns.GetHostEntry(GetIp());
+            //String hostName = System.Environment.GetEnvironmentVariable("COMPUTERNAME");
+
+            String hostName = hostEntry.HostName;
+            //var hostName = GetIp();
+
             //string imageBase64Data = Convert.ToBase64String(imageBytes);
             //string imageDataURL = string.Format("data:application/pdf;base64,{0}", imageBase64Data);
             //ViewBag.ImageData = imageDataURL;
@@ -155,6 +161,12 @@ namespace ReGenerateReport.Web.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        public string GetIp()
+        {
+            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+            //var remoteIpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            return ip;
         }
     }
 }
