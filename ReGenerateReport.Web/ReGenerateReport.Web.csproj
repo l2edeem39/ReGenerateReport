@@ -5,14 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="NewFolder\**" />
     <Compile Remove="ReGenerateReport.Api\**" />
+    <Content Remove="NewFolder\**" />
     <Content Remove="ReGenerateReport.Api\**" />
+    <EmbeddedResource Remove="NewFolder\**" />
     <EmbeddedResource Remove="ReGenerateReport.Api\**" />
+    <None Remove="NewFolder\**" />
     <None Remove="ReGenerateReport.Api\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="NewFolder\" />
   </ItemGroup>
 
   <ItemGroup>

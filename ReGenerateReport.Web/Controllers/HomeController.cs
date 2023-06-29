@@ -46,7 +46,7 @@ namespace ReGenerateReport.Web.Controllers
             return View();
         }
 
-        public async Task<WebPageResponse> PdfPartial(string strMethodName, string strUrl, string strJson, string strUser)
+        public async Task<WebPageResponse> PdfPartial(string strMethodName, string strUrl, string strJson, string strUser, string strType)
         {
             WebPageResponse WebResult = new WebPageResponse();
             string imageBase64Data = null;
@@ -140,7 +140,7 @@ namespace ReGenerateReport.Web.Controllers
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -167,6 +167,10 @@ namespace ReGenerateReport.Web.Controllers
             var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
             //var remoteIpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             return ip;
+        }
+        public string UploadPDF()
+        {
+            return "";
         }
     }
 }
