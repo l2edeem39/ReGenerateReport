@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using ReGenerateReport.Api.API;
+using ReGenerateReport.Api.Helper;
 using ReGenerateReport.Api.Service;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,7 @@ namespace ReGenerateReport.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
 
             //services.AddTransient<IUserRepository, UserRepository>();
             //services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
@@ -85,6 +87,10 @@ namespace ReGenerateReport.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            SignHelper._Configuration = Configuration;
+            IText7Helper._Configuration = Configuration;
+            AlfrescoHelper._Configuration = Configuration;
+            TokenHelper._Configuration = Configuration;
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
