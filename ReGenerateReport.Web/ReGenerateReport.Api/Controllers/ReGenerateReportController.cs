@@ -149,10 +149,25 @@ namespace ReGenerateReport.Api.Controllers
 
         [Route("api/UploadToAlfresco")]
         [HttpPost]
-        public async Task<IActionResult> UploadToAlfresco()
+        public async Task<IActionResult> UploadToAlfresco([FromBody] UploadAlfrescoRequestParameter Parameter)
         {
             
             var data = UploadPolicy_NonMotor("23", "181", "000031", "601", "A010");
+            if (String.IsNullOrEmpty(Parameter.pol_pre))
+            {
+                //NonMotor
+            }
+            else
+            {
+                if (Parameter.pol_no.Length == 6)
+                {
+                    //CMI
+                }
+                else if(Parameter.pol_no.Length == 7)
+                {
+                    //VMI
+                }
+            }
             return null;
         }
 
@@ -184,7 +199,7 @@ namespace ReGenerateReport.Api.Controllers
             #endregion
 
             //Console.WriteLine("Connecting database...");
-            var conn = new SqlConnection(_config["ConnectionString:nonmotorfirewebdbConstr"].ToString().Trim()); //ConfigurationManager.ConnectionStrings["nonmotordbConstr"].ToString());
+            var conn = new SqlConnection(_config["ConnectionString:nonmotordbConstr"].ToString().Trim()); //ConfigurationManager.ConnectionStrings["nonmotordbConstr"].ToString());
             conn.Open();
             SqlTransaction tran = conn.BeginTransaction();
 
@@ -196,7 +211,7 @@ namespace ReGenerateReport.Api.Controllers
             }
 
             //connect database LOG
-            var logConn = new SqlConnection(_config["ConnectionString:nonmotorfirewebdbConstr"].ToString().Trim()); //ConfigurationManager.ConnectionStrings["logdbConstr"].ToString());
+            var logConn = new SqlConnection(_config["ConnectionString:logdbConstr"].ToString().Trim()); //ConfigurationManager.ConnectionStrings["logdbConstr"].ToString());
             logConn.Open();
 
 
@@ -211,12 +226,13 @@ namespace ReGenerateReport.Api.Controllers
                 //Console.WriteLine("Get data from database...");
 
                 HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, $"Range date Start : "); //{CommonConfigs.StartDate}, End : {CommonConfigs.EndDate}");
+
                 using (var command = new SqlCommand("SpGetDataPolicyByPolicyNonMotor", conn))
                 {
-                    command.Parameters.AddWithValue("@PolYear", pol_yr);
-                    command.Parameters.AddWithValue("@PolBranch", pol_br);
-                    command.Parameters.AddWithValue("@PolNo", pol_no);
-                    command.Parameters.AddWithValue("@PolPre", pol_pre);
+                    command.Parameters.AddWithValue("@pol_yr", pol_yr);
+                    command.Parameters.AddWithValue("@pol_br", pol_br);
+                    command.Parameters.AddWithValue("@pol_no", pol_no);
+                    command.Parameters.AddWithValue("@pol_pre", pol_pre);
                     command.CommandType = CommandType.StoredProcedure;
                     SqlDataReader rdr = command.ExecuteReader();
                     while (rdr.Read())
@@ -564,7 +580,7 @@ namespace ReGenerateReport.Api.Controllers
         {
             try
             {
-                using (var command = new SqlCommand("SpInsertLogSubmitDocument", logConn))
+                using (var command = new SqlCommand("SpInsertLogSubmitDocumentDev", logConn))
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@Id", item.Id);
@@ -577,7 +593,7 @@ namespace ReGenerateReport.Api.Controllers
                     command.Parameters.AddWithValue("@PolPre", item.PolPre);
                     command.Parameters.AddWithValue("@ApplicationNo", item.ApplicationNo);
                     command.Parameters.AddWithValue("@PolicyNo", item.PolicyNo);
-                    command.Parameters.AddWithValue("@Message", item.Message);
+                    command.Parameters.AddWithValue("@Message", "BankTest - "+item.Message);
                     command.Parameters.AddWithValue("@PolicyType", item.PolicyType);
                     command.Parameters.AddWithValue("@PolicyLanguage", item.PolicyLanguage);
                     command.Parameters.AddWithValue("@JSReportTemplateId", item.JSReportTemplateId);
