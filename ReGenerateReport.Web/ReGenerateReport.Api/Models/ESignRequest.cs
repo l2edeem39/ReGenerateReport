@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -8,9 +9,10 @@ namespace ReGenerateReport.Api.Models
 {
     public class ESignRequest
     {
+        public static IConfiguration _Configuration;
         public string task
         {
-            get { return ConfigurationManager.AppSettings["ABBR"].ToString(); }
+            get { return _Configuration["Alfresco:ABBR"].ToString(); }
 
         }
         public string documentType { get; set; }

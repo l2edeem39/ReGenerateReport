@@ -168,9 +168,11 @@ namespace ReGenerateReport.Web.Controllers
             //var remoteIpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             return ip;
         }
-        public string UploadPDF()
+        public string UploadPDF(string strJson)
         {
-            return "";
+            string jsonArray = "{\"key\":\"@EndosNo='23181/END/000013-580'\",\"templateId\":\"NE02\",\"generateType\":\"2\"}";
+            var employee = JsonConvert.DeserializeObject<JsonRequestModel>(jsonArray);
+            return strJson;
         }
     }
 }

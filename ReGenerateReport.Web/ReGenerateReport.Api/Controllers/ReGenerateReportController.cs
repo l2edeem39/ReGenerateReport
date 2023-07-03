@@ -200,13 +200,13 @@ namespace ReGenerateReport.Api.Controllers
 
             //Console.WriteLine("Connecting database...");
             var conn = new SqlConnection(_config["ConnectionString:nonmotordbConstr"].ToString().Trim()); //ConfigurationManager.ConnectionStrings["nonmotordbConstr"].ToString());
-            conn.Open();
-            SqlTransaction tran = conn.BeginTransaction();
+            //conn.Open();
+            //SqlTransaction tran = conn.BeginTransaction();
 
             if (flagconnfire)
             {
                 connfire = new SqlConnection(_config["ConnectionString:nonmotorfirewebdbConstr"].ToString().Trim()); //ConfigurationManager.ConnectionStrings["nonmotorfirewebdbConstr"].ToString());
-                connfire.Open();
+                //connfire.Open();
                 tranfire = connfire.BeginTransaction();
             }
 
@@ -227,7 +227,55 @@ namespace ReGenerateReport.Api.Controllers
 
                 HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, $"Range date Start : "); //{CommonConfigs.StartDate}, End : {CommonConfigs.EndDate}");
 
-                using (var command = new SqlCommand("SpGetDataPolicyByPolicyNonMotor", conn))
+                using (SqlConnection connection = conn)
+                {
+                    connection.Open();
+
+                    using (SqlCommand command = new SqlCommand("SpGetDataPolicyByPolicyNonMotor", connection))
+                    {
+                        command.CommandType = System.Data.CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@pol_yr", pol_yr);
+                        command.Parameters.AddWithValue("@pol_br", pol_br);
+                        command.Parameters.AddWithValue("@pol_no", pol_no);
+                        command.Parameters.AddWithValue("@pol_pre", pol_pre);
+
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                        {
+                            DataSet dataSet = new DataSet();
+                            adapter.Fill(dataSet);
+                            var dt = dataSet.Tables[0];
+
+                            foreach (DataRow dr in dt.Rows)
+                            {
+                                SpGetDataPolicyNonMotor data = new SpGetDataPolicyNonMotor();
+                                data.isProtected = dr["isProtected"] != null ? (int)dr["isProtected"] : 0;
+                                data.PolYear = (string)dr["PolYear"].ToString();
+                                data.PolBranch = (string)dr["PolBranch"].ToString();
+                                data.PolNo = (string)dr["PolNo"].ToString();
+                                data.PolPre = (string)dr["PolPre"].ToString();
+                                data.AppYear = (string)dr["AppYear"].ToString();
+                                data.AppBranch = (string)dr["AppBranch"].ToString();
+                                data.ApplicationNo = (string)dr["ApplicationNo"].ToString();
+                                data.PolicyNo = (string)dr["PolicyNo"].ToString();
+                                data.PolicyType = string.IsNullOrEmpty((string)dr["PolicyType"].ToString()) ? null : Convert.ToInt32((int)dr["PolicyType"]);
+                                data.PolicyLanguage = (string)dr["PolicyLanguage"].ToString();
+                                data.fname = (string)dr["fname"].ToString();
+                                data.lname = (string)dr["lname"].ToString();
+                                data.ident_card = (string)dr["ident_card"].ToString();
+                                data.period_from = dr["period_from"] != null ? (DateTime)dr["period_from"] : new DateTime();
+                                data.period_to = dr["period_to"] != null ? (DateTime)dr["period_to"] : new DateTime();
+                                data.phone = (string)dr["phone"].ToString();
+                                data.e_email = (string)dr["e_email"].ToString();
+                                data.saleCode = (string)dr["saleCode"].ToString();
+                                data.tr_date = dr["tr_date"] != null ? (DateTime)dr["tr_date"] : new DateTime();
+                                models.Add(data);
+                            }
+                        }
+                    }
+                    connection.Close();
+                }
+
+                /*using (var command = new SqlCommand("SpGetDataPolicyByPolicyNonMotor", conn))
                 {
                     command.Parameters.AddWithValue("@pol_yr", pol_yr);
                     command.Parameters.AddWithValue("@pol_br", pol_br);
@@ -261,9 +309,58 @@ namespace ReGenerateReport.Api.Controllers
                         data.tr_date = String.IsNullOrEmpty(rdr.GetString("tr_date")) ? Convert.ToDateTime("") : Convert.ToDateTime(rdr.GetString("tr_date"));
                         models.Add(data);
                     }
-                }
-
+                }*/
                 if (models.Count <= 0)
+                {
+                    using (SqlConnection connection = connfire)
+                    {
+                        connection.Open();
+
+                        using (SqlCommand command = new SqlCommand("SpGetDataPolicyByPolicyNonMotor", connection))
+                        {
+                            command.CommandType = System.Data.CommandType.StoredProcedure;
+                            command.Parameters.AddWithValue("@pol_yr", pol_yr);
+                            command.Parameters.AddWithValue("@pol_br", pol_br);
+                            command.Parameters.AddWithValue("@pol_no", pol_no);
+                            command.Parameters.AddWithValue("@pol_pre", pol_pre);
+
+                            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                            {
+                                DataSet dataSet = new DataSet();
+                                adapter.Fill(dataSet);
+                                var dt = dataSet.Tables[0];
+
+                                foreach (DataRow dr in dt.Rows)
+                                {
+                                    SpGetDataPolicyNonMotor data = new SpGetDataPolicyNonMotor();
+                                    data.isProtected = dr["isProtected"] != null ? (int)dr["isProtected"] : 0;
+                                    data.PolYear = (string)dr["PolYear"].ToString();
+                                    data.PolBranch = (string)dr["PolBranch"].ToString();
+                                    data.PolNo = (string)dr["PolNo"].ToString();
+                                    data.PolPre = (string)dr["PolPre"].ToString();
+                                    data.AppYear = (string)dr["AppYear"].ToString();
+                                    data.AppBranch = (string)dr["AppBranch"].ToString();
+                                    data.ApplicationNo = (string)dr["ApplicationNo"].ToString();
+                                    data.PolicyNo = (string)dr["PolicyNo"].ToString();
+                                    data.PolicyType = string.IsNullOrEmpty((string)dr["PolicyType"].ToString()) ? null : Convert.ToInt32((int)dr["PolicyType"]);
+                                    data.PolicyLanguage = (string)dr["PolicyLanguage"].ToString();
+                                    data.fname = (string)dr["fname"].ToString();
+                                    data.lname = (string)dr["lname"].ToString();
+                                    data.ident_card = (string)dr["ident_card"].ToString();
+                                    data.period_from = dr["period_from"] != null ? (DateTime)dr["period_from"] : new DateTime();
+                                    data.period_to = dr["period_to"] != null ? (DateTime)dr["period_to"] : new DateTime();
+                                    data.phone = (string)dr["phone"].ToString();
+                                    data.e_email = (string)dr["e_email"].ToString();
+                                    data.saleCode = (string)dr["saleCode"].ToString();
+                                    data.tr_date = dr["tr_date"] != null ? (DateTime)dr["tr_date"] : new DateTime();
+                                    models.Add(data);
+                                }
+                            }
+                        }
+                        connection.Close();
+                    }
+                }
+                /*if (models.Count <= 0)
                 {
                     using (var command = new SqlCommand("SpGetDataPolicyByPolicyNonMotor", connfire))
                     {
@@ -291,16 +388,16 @@ namespace ReGenerateReport.Api.Controllers
                             data.fname = (string)rdr.GetString("fname");
                             data.lname = (string)rdr.GetString("lname");
                             data.ident_card = (string)rdr.GetString("ident_card");
-                            data.period_from = String.IsNullOrEmpty(rdr.GetString("period_from")) ? Convert.ToDateTime("") : Convert.ToDateTime(rdr.GetString("period_from"));
-                            data.period_to = String.IsNullOrEmpty(rdr.GetString("period_to")) ? Convert.ToDateTime("") : Convert.ToDateTime(rdr.GetString("period_to"));
+                            data.period_from = String.IsNullOrEmpty(rdr.GetString("period_from")) ? new DateTime() : Convert.ToDateTime(rdr.GetString("period_from"));
+                            data.period_to = String.IsNullOrEmpty(rdr.GetString("period_to")) ? new DateTime() : Convert.ToDateTime(rdr.GetString("period_to"));
                             data.phone = (string)rdr.GetString("phone");
                             data.e_email = (string)rdr.GetString("e_email");
                             data.saleCode = (string)rdr.GetString("saleCode");
-                            data.tr_date = String.IsNullOrEmpty(rdr.GetString("tr_date")) ? Convert.ToDateTime("") : Convert.ToDateTime(rdr.GetString("tr_date"));
+                            data.tr_date = String.IsNullOrEmpty(rdr.GetString("tr_date")) ? new DateTime() : Convert.ToDateTime(rdr.GetString("tr_date"));
                             models.Add(data);
                         }
                     }
-                }
+                }*/
 
                 HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, $"Get data from stored Successful. Total {models.Count.ToString()} item...");
                 HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, $"Get list policy end : {DateTime.Now.ToString()}");
@@ -319,7 +416,10 @@ namespace ReGenerateReport.Api.Controllers
                         Guid ID = Guid.NewGuid();
                         index++;
                         string templateSetYear = _config["TemplateSetYearNonMotor:SetYear_" + model.PolPre].ToString().Trim();   //ConfigurationManager.AppSettings["SetYear_" + model.PolPre].ToString();
-                        int templateAddYear = _config["TemplateSetYearNonMotor:SetYear_" + model.PolPre].ToString().Trim() == "" ? 0 : int.Parse(_config["ConnectionString:IsReplaceFile"].ToString().Trim());   //ConfigurationManager.AppSettings["AddYear_" + model.PolPre].ToString() == "" ? 0 : int.Parse(ConfigurationManager.AppSettings["AddYear_" + model.PolPre].ToString());
+                        int templateAddYear = _config["TemplateSetYearNonMotor:SetYear_" + model.PolPre.ToString()].ToString().Trim() == "" ? 0 : int.Parse(_config["TemplateSetYearNonMotor:SetYear_" + model.PolPre.ToString()].ToString().Trim());   //ConfigurationManager.AppSettings["AddYear_" + model.PolPre].ToString() == "" ? 0 : int.Parse(ConfigurationManager.AppSettings["AddYear_" + model.PolPre].ToString());
+                        string Path = _config["Alfresco:AlfrescoPath"].ToString();
+                        string Type = _config["Alfresco:AlfrescoType"].ToString();
+                        string MimeType = _config["Alfresco:AlfrescoMimeType"].ToString();
                         try
                         {
                             #region call log api start
@@ -353,7 +453,7 @@ namespace ReGenerateReport.Api.Controllers
                                 AlfrescoUploadResponse alfrescoResponse = new AlfrescoUploadResponse();
 
                                 string yearPolicy = (int.Parse(templateSetYear + model.PolicyNo.Substring(0, 2)) - templateAddYear).ToString();
-                                string destination = string.Format(AlfrescoConfigNonMotor.Path, yearPolicy, model.PolPre);
+                                string destination = string.Format(Path, yearPolicy, model.PolPre);
                                 if (response.respStatus == "success")
                                 {
                                     //data upload document
@@ -369,8 +469,8 @@ namespace ReGenerateReport.Api.Controllers
                                         file = null, //not keep file to database 
                                         name = model.PolicyNo.Replace("/", "-") + ".pdf",
                                         title = "AmitySubmitDocumentPolicyNonMotor",
-                                        mimetype = AlfrescoConfigNonMotor.MimeType,
-                                        type = AlfrescoConfigNonMotor.Type,
+                                        mimetype = MimeType,
+                                        type = Type,
                                         prop_vir_docnumber = model.PolicyNo,
                                         prop_vir_doctype = "NonMotor",
                                         prop_vir_docsubtype = null,
@@ -518,7 +618,7 @@ namespace ReGenerateReport.Api.Controllers
                         {
                             string templateId = "";
                             string yearPolicy = (int.Parse(templateSetYear + model.PolicyNo.Substring(0, 2)) - templateAddYear).ToString();
-                            string destination = string.Format(AlfrescoConfigNonMotor.Path, yearPolicy, model.PolPre);
+                            string destination = string.Format(Path, yearPolicy, model.PolPre);
                             //Console.WriteLine($"ERORR {index} of {models.Count} items... {ex.Message} "); //{ex.InnerException.Message}
                             //insert log
                             InsertLog(new LogPolicyDTO()
@@ -547,7 +647,6 @@ namespace ReGenerateReport.Api.Controllers
                         }
                     }
                 );
-
 
                 //Console.WriteLine("AmitySubmitDocumentPolicyNonMotor job schedule successfully...");
             }
@@ -612,12 +711,5 @@ namespace ReGenerateReport.Api.Controllers
 
             }
         }
-
-        class AlfrescoConfigNonMotor
-        {
-            public static string Path = ConfigurationManager.AppSettings["Alfresco:AlfrescoPath"].ToString();
-            public static string Type = ConfigurationManager.AppSettings["AlfrescoType"].ToString();
-            public static string MimeType = ConfigurationManager.AppSettings["AlfrescoMimeType"].ToString();
-        };
     }
 }

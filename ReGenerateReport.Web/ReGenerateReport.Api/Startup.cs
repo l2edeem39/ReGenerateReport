@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using ReGenerateReport.Api.API;
 using ReGenerateReport.Api.Helper;
+using ReGenerateReport.Api.Models;
 using ReGenerateReport.Api.Service;
 using System;
 using System.Collections.Generic;
@@ -91,6 +92,7 @@ namespace ReGenerateReport.Api
             IText7Helper._Configuration = Configuration;
             AlfrescoHelper._Configuration = Configuration;
             TokenHelper._Configuration = Configuration;
+            ESignRequest._Configuration = Configuration;
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
