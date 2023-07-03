@@ -255,6 +255,7 @@ namespace ReGenerateReport.Api.Controllers
                                 data.PolPre = (string)dr["PolPre"].ToString();
                                 data.AppYear = (string)dr["AppYear"].ToString();
                                 data.AppBranch = (string)dr["AppBranch"].ToString();
+                                data.AppNo = (string)dr["AppNo"].ToString();
                                 data.ApplicationNo = (string)dr["ApplicationNo"].ToString();
                                 data.PolicyNo = (string)dr["PolicyNo"].ToString();
                                 data.PolicyType = string.IsNullOrEmpty((string)dr["PolicyType"].ToString()) ? null : Convert.ToInt32((int)dr["PolicyType"]);
@@ -340,6 +341,7 @@ namespace ReGenerateReport.Api.Controllers
                                     data.PolPre = (string)dr["PolPre"].ToString();
                                     data.AppYear = (string)dr["AppYear"].ToString();
                                     data.AppBranch = (string)dr["AppBranch"].ToString();
+                                    data.AppNo = (string)dr["AppNo"].ToString();
                                     data.ApplicationNo = (string)dr["ApplicationNo"].ToString();
                                     data.PolicyNo = (string)dr["PolicyNo"].ToString();
                                     data.PolicyType = string.IsNullOrEmpty((string)dr["PolicyType"].ToString()) ? null : Convert.ToInt32((int)dr["PolicyType"]);
@@ -706,9 +708,9 @@ namespace ReGenerateReport.Api.Controllers
                     command.ExecuteNonQuery();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                var msg = ex;
             }
         }
     }
