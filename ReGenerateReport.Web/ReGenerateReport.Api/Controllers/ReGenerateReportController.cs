@@ -151,23 +151,85 @@ namespace ReGenerateReport.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadToAlfresco([FromBody] UploadAlfrescoRequestParameter Parameter)
         {
-            
-            var data = UploadPolicy_NonMotor("23", "181", "000031", "601", "A010");
-            if (String.IsNullOrEmpty(Parameter.pol_pre))
+            //Parameter.policyNo = "23181/POL/000013-580";
+            //Parameter.templateId = "A010";
+            ReportResponse Result = new ReportResponse();
+            string pol_yr = "", pol_br = "", pol_no = "", pol_pre = "", type = "";
+            if (Parameter.policyNo.Length == 20)
             {
-                //NonMotor
+                pol_yr = Parameter.policyNo.Substring(0, 2);
+                pol_br = Parameter.policyNo.Substring(2, 3);
+                pol_no = Parameter.policyNo.Substring(10, 6);
+                pol_pre = Parameter.policyNo.Substring(17, 3);
+                type = "NonMotor";
             }
             else
             {
-                if (Parameter.pol_no.Length == 6)
+                string[] _data = Parameter.policyNo.Split("/");
+                string[] _data2 = _data[_data.Count() - 1].Split("/");
+                if (_data2[0].Length == 6)
                 {
-                    //CMI
+                    type = "VMI";
+                    pol_pre = "";
+                    if (Parameter.policyNo.Length == 11)
+                    {
+                        pol_yr = Parameter.policyNo.Substring(0, 2);
+                        pol_br = Parameter.policyNo.Substring(2, 3);
+                        pol_no = Parameter.policyNo.Substring(5, 6);
+                    }
+                    else
+                    {
+                        //lenght 15
+                        pol_yr = Parameter.policyNo.Substring(0, 2);
+                        pol_br = Parameter.policyNo.Substring(2, 3);
+                        pol_no = Parameter.policyNo.Substring(9, 6);
+                    }
+
                 }
-                else if(Parameter.pol_no.Length == 7)
+                else if (_data2[0].Length == 7)
                 {
-                    //VMI
+                    type = "CMI";
+                    pol_pre = "";
+                    if (Parameter.policyNo.Length == 12)
+                    {
+                        pol_yr = Parameter.policyNo.Substring(0, 2);
+                        pol_br = Parameter.policyNo.Substring(2, 3);
+                        pol_no = Parameter.policyNo.Substring(5, 7);
+                    }
+                    else
+                    {
+                        //lenght 15
+                        pol_yr = Parameter.policyNo.Substring(0, 2);
+                        pol_br = Parameter.policyNo.Substring(2, 3);
+                        pol_no = Parameter.policyNo.Substring(9, 7);
+                    }
+                    
                 }
             }
+
+            if (type == "NonMotor")
+            {
+                var data = UploadPolicy_NonMotor(pol_yr, pol_br, pol_no, pol_pre, Parameter.templateId);
+            }
+            
+            //if (String.IsNullOrEmpty(type))
+            //{
+            //    //NonMotor
+            //}
+            //else
+            //{
+            //    if (Parameter.pol_no.Length == 6)
+            //    {
+            //        //CMI
+            //    }
+            //    else if(Parameter.pol_no.Length == 7)
+            //    {
+            //        //VMI
+            //    }
+            //}
+
+
+
             return null;
         }
 
@@ -177,7 +239,7 @@ namespace ReGenerateReport.Api.Controllers
             SqlConnection connfire = null;
             SqlTransaction tranfire = null;
 
-            if (_config["ConnectionString:nonmotorfirewebdbConstr"].ToString().Trim()  != "")  //ConfigurationManager.ConnectionStrings["nonmotorfirewebdbConstr"].ToString().Trim()
+            if (_config["ConnectionString:nonmotorfirewebdbConstr"].ToString().Trim() != "")  //ConfigurationManager.ConnectionStrings["nonmotorfirewebdbConstr"].ToString().Trim()
             {
                 flagconnfire = true;
             }
@@ -276,41 +338,6 @@ namespace ReGenerateReport.Api.Controllers
                     connection.Close();
                 }
 
-                /*using (var command = new SqlCommand("SpGetDataPolicyByPolicyNonMotor", conn))
-                {
-                    command.Parameters.AddWithValue("@pol_yr", pol_yr);
-                    command.Parameters.AddWithValue("@pol_br", pol_br);
-                    command.Parameters.AddWithValue("@pol_no", pol_no);
-                    command.Parameters.AddWithValue("@pol_pre", pol_pre);
-                    command.CommandType = CommandType.StoredProcedure;
-                    SqlDataReader rdr = command.ExecuteReader();
-                    while (rdr.Read())
-                    {
-                        SpGetDataPolicyNonMotor data = new SpGetDataPolicyNonMotor();
-                        data.isProtected = (int)rdr.GetValue("isProtected");
-                        data.PolYear = (string)rdr.GetString("PolYear");
-                        data.PolBranch = (string)rdr.GetString("PolBranch");
-                        data.PolNo = (string)rdr.GetString("PolNo");
-                        data.PolPre = (string)rdr.GetString("PolPre");
-                        data.AppYear = (string)rdr.GetString("AppYear");
-                        data.AppBranch = (string)rdr.GetString("AppBranch");
-                        data.AppNo = (string)rdr.GetString("AppNo");
-                        data.ApplicationNo = (string)rdr.GetString("ApplicationNo");
-                        data.PolicyNo = (string)rdr.GetString("PolicyNo");
-                        data.PolicyType = String.IsNullOrEmpty(rdr.GetString("PolicyType")) ? null : Convert.ToInt32(rdr.GetString("PolicyType"));
-                        data.PolicyLanguage = (string)rdr.GetString("PolicyLanguage");
-                        data.fname = (string)rdr.GetString("fname");
-                        data.lname = (string)rdr.GetString("lname");
-                        data.ident_card = (string)rdr.GetString("ident_card");
-                        data.period_from = String.IsNullOrEmpty(rdr.GetString("period_from")) ? Convert.ToDateTime("") : Convert.ToDateTime(rdr.GetString("period_from"));
-                        data.period_to = String.IsNullOrEmpty(rdr.GetString("period_to")) ? Convert.ToDateTime("") : Convert.ToDateTime(rdr.GetString("period_to"));
-                        data.phone = (string)rdr.GetString("phone");
-                        data.e_email = (string)rdr.GetString("e_email");
-                        data.saleCode = (string)rdr.GetString("saleCode");
-                        data.tr_date = String.IsNullOrEmpty(rdr.GetString("tr_date")) ? Convert.ToDateTime("") : Convert.ToDateTime(rdr.GetString("tr_date"));
-                        models.Add(data);
-                    }
-                }*/
                 if (models.Count <= 0)
                 {
                     using (SqlConnection connection = connfire)
@@ -362,44 +389,6 @@ namespace ReGenerateReport.Api.Controllers
                         connection.Close();
                     }
                 }
-                /*if (models.Count <= 0)
-                {
-                    using (var command = new SqlCommand("SpGetDataPolicyByPolicyNonMotor", connfire))
-                    {
-                        command.Parameters.AddWithValue("@PolYear", pol_yr);
-                        command.Parameters.AddWithValue("@PolBranch", pol_br);
-                        command.Parameters.AddWithValue("@PolNo", pol_no);
-                        command.Parameters.AddWithValue("@PolPre", pol_pre);
-                        command.CommandType = CommandType.StoredProcedure;
-                        SqlDataReader rdr = command.ExecuteReader();
-                        while (rdr.Read())
-                        {
-                            SpGetDataPolicyNonMotor data = new SpGetDataPolicyNonMotor();
-                            data.isProtected = (int)rdr.GetValue("isProtected");
-                            data.PolYear = (string)rdr.GetString("PolYear");
-                            data.PolBranch = (string)rdr.GetString("PolBranch");
-                            data.PolNo = (string)rdr.GetString("PolNo");
-                            data.PolPre = (string)rdr.GetString("PolPre");
-                            data.AppYear = (string)rdr.GetString("AppYear");
-                            data.AppBranch = (string)rdr.GetString("AppBranch");
-                            data.AppNo = (string)rdr.GetString("AppNo");
-                            data.ApplicationNo = (string)rdr.GetString("ApplicationNo");
-                            data.PolicyNo = (string)rdr.GetString("PolicyNo");
-                            data.PolicyType = String.IsNullOrEmpty(rdr.GetString("PolicyType")) ? null : Convert.ToInt32(rdr.GetString("PolicyType"));
-                            data.PolicyLanguage = (string)rdr.GetString("PolicyLanguage");
-                            data.fname = (string)rdr.GetString("fname");
-                            data.lname = (string)rdr.GetString("lname");
-                            data.ident_card = (string)rdr.GetString("ident_card");
-                            data.period_from = String.IsNullOrEmpty(rdr.GetString("period_from")) ? new DateTime() : Convert.ToDateTime(rdr.GetString("period_from"));
-                            data.period_to = String.IsNullOrEmpty(rdr.GetString("period_to")) ? new DateTime() : Convert.ToDateTime(rdr.GetString("period_to"));
-                            data.phone = (string)rdr.GetString("phone");
-                            data.e_email = (string)rdr.GetString("e_email");
-                            data.saleCode = (string)rdr.GetString("saleCode");
-                            data.tr_date = String.IsNullOrEmpty(rdr.GetString("tr_date")) ? new DateTime() : Convert.ToDateTime(rdr.GetString("tr_date"));
-                            models.Add(data);
-                        }
-                    }
-                }*/
 
                 HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, $"Get data from stored Successful. Total {models.Count.ToString()} item...");
                 HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, $"Get list policy end : {DateTime.Now.ToString()}");
@@ -418,7 +407,7 @@ namespace ReGenerateReport.Api.Controllers
                         Guid ID = Guid.NewGuid();
                         index++;
                         string templateSetYear = _config["TemplateSetYearNonMotor:SetYear_" + model.PolPre].ToString().Trim();   //ConfigurationManager.AppSettings["SetYear_" + model.PolPre].ToString();
-                        int templateAddYear = _config["TemplateSetYearNonMotor:SetYear_" + model.PolPre.ToString()].ToString().Trim() == "" ? 0 : int.Parse(_config["TemplateSetYearNonMotor:SetYear_" + model.PolPre.ToString()].ToString().Trim());   //ConfigurationManager.AppSettings["AddYear_" + model.PolPre].ToString() == "" ? 0 : int.Parse(ConfigurationManager.AppSettings["AddYear_" + model.PolPre].ToString());
+                        int templateAddYear = _config["TemplateSetYearNonMotor:AddYear_" + model.PolPre.ToString()].ToString().Trim() == "" ? 0 : int.Parse(_config["TemplateSetYearNonMotor:AddYear_" + model.PolPre.ToString()].ToString().Trim());   //ConfigurationManager.AppSettings["AddYear_" + model.PolPre].ToString() == "" ? 0 : int.Parse(ConfigurationManager.AppSettings["AddYear_" + model.PolPre].ToString());
                         string Path = _config["Alfresco:AlfrescoPath"].ToString();
                         string Type = _config["Alfresco:AlfrescoType"].ToString();
                         string MimeType = _config["Alfresco:AlfrescoMimeType"].ToString();
@@ -428,21 +417,21 @@ namespace ReGenerateReport.Api.Controllers
                             indexLog++;
                             HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, $"Start request document policyNo : {model.PolicyNo} | Index [{indexLog}/{models.Count.ToString()}]", model.PolicyNo);
                             #endregion
-                                AlfrescoSearchResponse listFileLibrary = AlfrescoHelper.Search(model.PolicyNo, "NonMotor", logId, dateLog).Result;
-                                if (listFileLibrary != null && listFileLibrary.items != null && listFileLibrary.items.Count > 0)
+                            AlfrescoSearchResponse listFileLibrary = AlfrescoHelper.Search(model.PolicyNo, "NonMotor", logId, dateLog).Result;
+                            if (listFileLibrary != null && listFileLibrary.items != null && listFileLibrary.items.Count > 0)
+                            {
+                                string isReplaceFile = _config["ConnectionString:IsReplaceFile"].ToString().Trim();  //ConfigurationManager.AppSettings["IsReplaceFile"].ToString();
+                                if (isReplaceFile == "true")
                                 {
-                                    string isReplaceFile = _config["ConnectionString:IsReplaceFile"].ToString().Trim();  //ConfigurationManager.AppSettings["IsReplaceFile"].ToString();
-                                    if (isReplaceFile == "true")
-                                    {
-                                        string fileID = listFileLibrary.items[0].nodeRef.Replace("workspace://SpacesStore/", "");
-                                        string delResult = AlfrescoHelper.DeleteNonMotor(fileID, logId, dateLog).Result;
-                                    }
-                                    else
-                                    {
-                                        //Console.WriteLine($"(Found this file ) Completed {index} of {models.Count} items...");
-                                        return;
-                                    }
+                                    string fileID = listFileLibrary.items[0].nodeRef.Replace("workspace://SpacesStore/", "");
+                                    string delResult = AlfrescoHelper.DeleteNonMotor(fileID, logId, dateLog).Result;
                                 }
+                                else
+                                {
+                                    //Console.WriteLine($"(Found this file ) Completed {index} of {models.Count} items...");
+                                    return;
+                                }
+                            }
 
                             //string templateId = _config["TemplateITextNonMotor:" + model.PolPre + ""].ToString();    //ConfigurationManager.AppSettings[model.PolPre].ToString();
                             string policyFormat = model.PolicyNo;
@@ -694,7 +683,7 @@ namespace ReGenerateReport.Api.Controllers
                     command.Parameters.AddWithValue("@PolPre", item.PolPre);
                     command.Parameters.AddWithValue("@ApplicationNo", item.ApplicationNo);
                     command.Parameters.AddWithValue("@PolicyNo", item.PolicyNo);
-                    command.Parameters.AddWithValue("@Message", "BankTest - "+item.Message);
+                    command.Parameters.AddWithValue("@Message", "BankTest - " + item.Message);
                     command.Parameters.AddWithValue("@PolicyType", item.PolicyType);
                     command.Parameters.AddWithValue("@PolicyLanguage", item.PolicyLanguage);
                     command.Parameters.AddWithValue("@JSReportTemplateId", item.JSReportTemplateId);
