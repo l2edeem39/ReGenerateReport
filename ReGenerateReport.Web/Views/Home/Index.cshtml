@@ -125,12 +125,12 @@
     </div>
     <div class="container">
         <div class="row">
-            <div id="divResponsePrettyJSONFormatLabel" class="col-md-6">
+            <div id="divResponsePrettyJSONFormatLabel" class="col-md-10">
                 <label for="exampleFormControlTextarea12" class="txt">Response</label>
                 <label id="txtResponse" style="color:red"></label>
                 <input id="inputValueJson" type="text" style="display:none"/>
             </div>
-            <div class="col-sm-6" style="text-align:right">
+            <div class="col-sm-2" style="text-align:right">
                 <input type="button" id="upload" class="btn btn-outline-primary btn-sm" style="margin-bottom:5px;display:none" onclick="UploadData()" value="Upload" />
             </div>
         </div>
@@ -161,11 +161,10 @@
             var strUrl = document.getElementById('txtURL').value
             var strJson = document.getElementById('prettyJSONFormat').value
             var strUser = document.getElementById('txtUserName').value
-            var strType = $("input[type=radio][name=inlineRadioOptions]:checked").val();
             document.getElementById('inputValueJson').value = strJson;
             //console.log(value);
 
-            var url = "@Url.Action("PdfPartial", "Home")" + "?strMethodName=" + strMethodName + "&strUrl=" + strUrl + "&strJson=" + strJson + "&strUser=" + strUser + "" + "&strType=" + strType + "";
+            var url = "@Url.Action("PdfPartial", "Home")" + "?strMethodName=" + strMethodName + "&strUrl=" + strUrl + "&strJson=" + strJson + "&strUser=" + strUser + "";
 
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url, true);
@@ -225,7 +224,8 @@
             document.getElementById('upload').disabled = true;
             document.getElementById('upload').value = 'Uploading...';
             var strJson = document.getElementById('inputValueJson').value;
-            var url = "@Url.Action("UploadPDF", "Home")" + "?strJson=" + strJson + "";
+            var strUser = document.getElementById('txtUserName').value
+            var url = "@Url.Action("UploadPDF", "Home")" + "?strJson=" + strJson + "&Username=" + strUser + "";
 
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url, true);

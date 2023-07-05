@@ -46,7 +46,7 @@ namespace ReGenerateReport.Web.Controllers
             return View();
         }
 
-        public async Task<WebPageResponse> PdfPartial(string strMethodName, string strUrl, string strJson, string strUser, string strType)
+        public async Task<WebPageResponse> PdfPartial(string strMethodName, string strUrl, string strJson, string strUser)
         {
             WebPageResponse WebResult = new WebPageResponse();
             string imageBase64Data = null;
@@ -168,7 +168,7 @@ namespace ReGenerateReport.Web.Controllers
             //var remoteIpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             return ip;
         }
-        public async Task<ResponseUploadPDF> UploadPDF(string strJson)
+        public async Task<ResponseUploadPDF> UploadPDF(string strJson, string Username)
         {
             try
             {
@@ -178,7 +178,6 @@ namespace ReGenerateReport.Web.Controllers
                 var policyNumber = jsonModel.key.Remove(0, 10).ToString().Replace("'", "");
                 RequestData.policyNo = policyNumber;
                 RequestData.templateId = jsonModel.templateId;
-                var Username = string.Empty;
                 var Password = string.Empty;
 
                 using (var client = new HttpClient())
