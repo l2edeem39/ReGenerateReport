@@ -379,12 +379,12 @@ namespace ReGenerateReport.Api.Controllers
                                 data.fname = (string)dr["fname"].ToString();
                                 data.lname = (string)dr["lname"].ToString();
                                 data.ident_card = (string)dr["ident_card"].ToString();
-                                data.period_from = dr["period_from"] != null ? (DateTime)dr["period_from"] : new DateTime();
-                                data.period_to = dr["period_to"] != null ? (DateTime)dr["period_to"] : new DateTime();
+                                data.period_from = dr["period_from"] != null ? DateTime.Parse((string)dr["period_from"]) : new DateTime();
+                                data.period_to = dr["period_to"] != null ? DateTime.Parse((string)dr["period_to"]) : new DateTime();
                                 data.phone = (string)dr["phone"].ToString();
                                 data.e_email = (string)dr["e_email"].ToString();
                                 data.saleCode = (string)dr["saleCode"].ToString();
-                                data.tr_date = dr["tr_date"] != null ? (DateTime)dr["tr_date"] : new DateTime();
+                                data.tr_date = dr["tr_date"] != null ? DateTime.Parse((string)dr["agree_date"]) : new DateTime();
                                 models.Add(data);
                             }
                         }
@@ -430,12 +430,12 @@ namespace ReGenerateReport.Api.Controllers
                                     data.fname = (string)dr["fname"].ToString();
                                     data.lname = (string)dr["lname"].ToString();
                                     data.ident_card = (string)dr["ident_card"].ToString();
-                                    data.period_from = dr["period_from"] != null ? (DateTime)dr["period_from"] : new DateTime();
-                                    data.period_to = dr["period_to"] != null ? (DateTime)dr["period_to"] : new DateTime();
+                                    data.period_from = dr["period_from"] != null ? DateTime.Parse((string)dr["period_from"]) : new DateTime();
+                                    data.period_to = dr["period_to"] != null ? DateTime.Parse((string)dr["period_to"]) : new DateTime();
                                     data.phone = (string)dr["phone"].ToString();
                                     data.e_email = (string)dr["e_email"].ToString();
                                     data.saleCode = (string)dr["saleCode"].ToString();
-                                    data.tr_date = dr["tr_date"] != null ? (DateTime)dr["tr_date"] : new DateTime();
+                                    data.tr_date = dr["tr_date"] != null ? DateTime.Parse((string)dr["agree_date"]) : new DateTime();
                                     models.Add(data);
                                 }
                             }
@@ -730,6 +730,8 @@ namespace ReGenerateReport.Api.Controllers
 
         private string UploadPolicy_VMI(string pol_yr, string pol_br, string pol_no, string templateId)
         {
+            CultureInfo culture = new CultureInfo("en-US");
+
             int _statusCode = 404;
             string _message = "Not Found";
             List<SpGetDataPolicyVmi> models = new List<SpGetDataPolicyVmi>();
@@ -784,6 +786,9 @@ namespace ReGenerateReport.Api.Controllers
 
                             foreach (DataRow dr in dt.Rows)
                             {
+
+                                var dd = Convert.ToDateTime(dr["period_to"], culture).ToString("d", new CultureInfo("en-US"));
+
                                 SpGetDataPolicyVmi data = new SpGetDataPolicyVmi();
                                 data.isProtected = dr["isProtected"] != null ? (int)dr["isProtected"] : 0;
                                 data.PolYear = (string)dr["PolYear"].ToString();
@@ -799,11 +804,11 @@ namespace ReGenerateReport.Api.Controllers
                                 data.fname = (string)dr["fname"].ToString();
                                 data.lname = (string)dr["lname"].ToString();
                                 data.ident_card = (string)dr["ident_card"].ToString();
-                                data.period_from = dr["period_from"] != null ? (DateTime)dr["period_from"] : new DateTime();
-                                data.period_to = dr["period_to"] != null ? (DateTime)dr["period_to"] : new DateTime();
+                                data.period_from = dr["period_from"] != null ? DateTime.Parse((string)dr["period_from"]) : new DateTime();
+                                data.period_to = dr["period_to"] != null ? DateTime.Parse((string)dr["period_to"]) : new DateTime();
                                 data.phone = (string)dr["phone"].ToString();
                                 data.e_email = (string)dr["e_email"].ToString();
-                                data.agree_date = dr["agree_date"] != null ? (DateTime)dr["agree_date"] : new DateTime();
+                                data.agree_date = dr["agree_date"] != null ? DateTime.Parse((string)dr["agree_date"]) : new DateTime();
                                 models.Add(data);
                             }
                         }
@@ -816,7 +821,7 @@ namespace ReGenerateReport.Api.Controllers
 
                 //Console.WriteLine("Begin generate document, esign document and upload to alfresco...");
                 //Console.WriteLine($"Total {models.Count} item...");
-                CultureInfo culture = new CultureInfo("en-US");
+                
                 int index = 0;
                 int indexLog = 0;
 
@@ -1150,12 +1155,12 @@ namespace ReGenerateReport.Api.Controllers
                                 data.fname = (string)dr["fname"].ToString();
                                 data.lname = (string)dr["lname"].ToString();
                                 data.ident_card = (string)dr["ident_card"].ToString();
-                                data.period_from = dr["period_from"] != null ? (DateTime)dr["period_from"] : new DateTime();
-                                data.period_to = dr["period_to"] != null ? (DateTime)dr["period_to"] : new DateTime();
+                                data.period_from = dr["period_from"] != null ? DateTime.Parse((string)dr["period_from"]) : new DateTime();
+                                data.period_to = dr["period_to"] != null ? DateTime.Parse((string)dr["period_to"]) : new DateTime();
                                 data.phone = (string)dr["phone"].ToString();
                                 data.e_email = (string)dr["e_email"].ToString();
                                 data.saleCode = (string)dr["saleCode"].ToString();
-                                data.tr_date = dr["tr_date"] != null ? (DateTime)dr["tr_date"] : new DateTime();
+                                data.tr_date = dr["tr_date"] != null ? DateTime.Parse((string)dr["agree_date"]) : new DateTime();
                                 models.Add(data);
                             }
                         }
