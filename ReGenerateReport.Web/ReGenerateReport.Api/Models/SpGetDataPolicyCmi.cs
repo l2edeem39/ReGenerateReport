@@ -5,13 +5,12 @@ using System.Threading.Tasks;
 
 namespace ReGenerateReport.Api.Models
 {
-    public class SpGetDataPolicyNonMotor
+    public class SpGetDataPolicyCmi
     {
         public int isProtected { get; set; }
         public string PolYear { get; set; }
         public string PolBranch { get; set; }
         public string PolNo { get; set; }
-        public string PolPre { get; set; }
         public string AppYear { get; set; }
         public string AppBranch { get; set; }
         public string AppNo { get; set; }
@@ -27,10 +26,10 @@ namespace ReGenerateReport.Api.Models
         public string phone { get; set; }
         public string e_email { get; set; }
         public string saleCode { get; set; }
-        public System.DateTime tr_date { get; set; }
+        public DateTime tr_date { get; set; }
     }
 
-    public class LogPolicyDTONonMotor
+    public class LogPolicyDTOCmi
     {
         public Guid Id { get; set; }
         public string AppYear { get; set; }
@@ -39,7 +38,6 @@ namespace ReGenerateReport.Api.Models
         public string PolYear { get; set; }
         public string PolBranch { get; set; }
         public string PolNo { get; set; }
-        public string PolPre { get; set; }
         public string ApplicationNo { get; set; }
         public string PolicyNo { get; set; }
         public string PolicyType { get; set; }
@@ -50,8 +48,8 @@ namespace ReGenerateReport.Api.Models
         public string Status { get; set; }
         public string Message { get; set; }
         public string ExceptionMessage { get; set; }
-        public string CreateDate { get; set; }
-        public string UpdateDate { get; set; }
+        public System.DateTime CreateDate { get; set; }
+        public System.DateTime UpdateDate { get; set; }
         public System.DateTime PolicyDate { get; set; }
         public string ProcessDocNumber { get; set; }
         public string ThreadID { get; set; }

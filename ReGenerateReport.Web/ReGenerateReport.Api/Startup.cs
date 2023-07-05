@@ -93,6 +93,7 @@ namespace ReGenerateReport.Api
             AlfrescoHelper._Configuration = Configuration;
             TokenHelper._Configuration = Configuration;
             ESignRequest._Configuration = Configuration;
+            CommonHelper._Configuration = Configuration;
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

@@ -141,7 +141,7 @@ namespace ReGenerateReport.Api.Helper
             }
             return Response;
         }
-        public static async Task<AlfrescoUploadResponse> UploadNonMotor(AlfrescoUploadRequest RequestData, Guid logId, DateTime dateLog)
+        public static async Task<AlfrescoUploadResponse> Upload(AlfrescoUploadRequest RequestData, Guid logId, DateTime dateLog)
         {
             AlfrescoUploadResponse Result = new AlfrescoUploadResponse();
 
@@ -210,7 +210,7 @@ namespace ReGenerateReport.Api.Helper
             }
             return Result;
         }
-        public static async Task<AlfrescoUploadResponse> UpdateNonMotor(AlfrescoUpdateRequest RequestData, Guid logId, DateTime dateLog)
+        public static async Task<AlfrescoUploadResponse> Update(AlfrescoUpdateRequest RequestData, Guid logId, DateTime dateLog)
         {
             AlfrescoUploadResponse Result = new AlfrescoUploadResponse();
             try
@@ -262,7 +262,7 @@ namespace ReGenerateReport.Api.Helper
             return Result;
 
         }
-        public static async Task<string> DeleteNonMotor(string fileID, Guid logId, DateTime dateLog)
+        public static async Task<string> Delete(string fileID, Guid logId, DateTime dateLog)
         {
             try
             {
