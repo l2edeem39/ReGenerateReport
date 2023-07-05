@@ -168,11 +168,43 @@ namespace ReGenerateReport.Web.Controllers
             //var remoteIpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             return ip;
         }
-        public string UploadPDF(string strJson)
+        public async Task<ResponseUploadPDF> UploadPDF(string strJson)
         {
-            string jsonArray = "{\"key\":\"@EndosNo='23181/END/000013-580'\",\"templateId\":\"NE02\",\"generateType\":\"2\"}";
-            var employee = JsonConvert.DeserializeObject<JsonRequestModel>(jsonArray);
-            return strJson;
+            try
+            {
+                //string jsonArray = "{\"key\":\"@PolicyNo='23181/POL/000013-580'\",\"templateId\":\"NE02\",\"generateType\":\"2\"}";
+                var RequestData = new RequestUploadPDF();
+                var jsonModel = JsonConvert.DeserializeObject<JsonRequestModel>(strJson);
+                var policyNumber = jsonModel.key.Remove(0, 10).ToString().Replace("'", "");
+                RequestData.policyNo = policyNumber;
+                RequestData.templateId = jsonModel.templateId;
+                var Username = string.Empty;
+                var Password = string.Empty;
+
+                using (var client = new HttpClient())
+                {
+                    string Endpoint = _config.GetSection("DefaultUrlUpload").Value.ToString();
+                    string JsonRequest = JsonConvert.SerializeObject(RequestData);
+                    StringContent content = new StringContent(JsonRequest, Encoding.UTF8, "application/json");
+                    client.DefaultRequestHeaders.Add("Authorization", $"Basic {Base64Encode($"{Username}:{Password}")}");
+                    using (HttpResponseMessage HttpResponse = client.PostAsync(Endpoint, content).Result)
+                    {
+                        var responseContent = await HttpResponse.Content.ReadAsStringAsync();
+                        var reportResponse = JsonConvert.DeserializeObject<ResponseUploadPDF>(responseContent);
+                        return reportResponse;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var res = new ResponseUploadPDF()
+                {
+                    statusCode = "500",
+                    message = ex.Message
+                };
+                return res;
+            }
         }
+
     }
 }
