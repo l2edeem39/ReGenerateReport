@@ -446,7 +446,7 @@ namespace ReGenerateReport.Api.Controllers
                     }
                 }
 
-                HelperLogFile.WriteLogDB(sequence++,"Get list policy end : {DateTime.Now.ToString()}");
+                HelperLogFile.WriteLogDB(sequence++, $"Get list policy end : {DateTime.Now.ToString()}");
                 HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, $"Get data from stored Successful. Total {models.Count.ToString()} item...");
                 HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, $"Get list policy end : {DateTime.Now.ToString()}");
 
