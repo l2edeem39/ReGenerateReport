@@ -384,7 +384,7 @@ namespace ReGenerateReport.Api.Controllers
                                 data.phone = (string)dr["phone"].ToString();
                                 data.e_email = (string)dr["e_email"].ToString();
                                 data.saleCode = (string)dr["saleCode"].ToString();
-                                data.tr_date = dr["tr_date"] != null ? DateTime.Parse((string)dr["agree_date"]) : new DateTime();
+                                data.tr_date = dr["tr_date"] != null ? DateTime.Parse((string)dr["tr_date"]) : new DateTime();
                                 models.Add(data);
                             }
                         }
@@ -1160,7 +1160,7 @@ namespace ReGenerateReport.Api.Controllers
                                 data.phone = (string)dr["phone"].ToString();
                                 data.e_email = (string)dr["e_email"].ToString();
                                 data.saleCode = (string)dr["saleCode"].ToString();
-                                data.tr_date = dr["tr_date"] != null ? DateTime.Parse((string)dr["agree_date"]) : new DateTime();
+                                data.tr_date = dr["tr_date"] != null ? DateTime.Parse((string)dr["tr_date"]) : new DateTime();
                                 models.Add(data);
                             }
                         }
