@@ -536,9 +536,9 @@ namespace ReGenerateReport.Api.Controllers
 
                                     alfresco.file = contentFile;
                                     alfrescoResponse = AlfrescoHelper.Upload(alfresco, logId, dateLog).Result;
+                                    alfresco.file = null;
                                     if (alfrescoResponse.success)
                                     {
-                                        alfresco.file = null;
                                         InsertLogNonMotor(new LogPolicyDTONonMotor()
                                         {
                                             Id = ID,
@@ -1258,9 +1258,9 @@ namespace ReGenerateReport.Api.Controllers
 
                                     alfresco.file = contentFile;
                                     alfrescoResponse = AlfrescoHelper.Upload(alfresco, logId, dateLog).Result;
+                                    alfresco.file = null;
                                     if (alfrescoResponse.success)
                                     {
-                                        alfresco.file = null;
                                         InsertLogCmi(new LogPolicyDTOCmi()
                                         {
                                             Id = ID,
