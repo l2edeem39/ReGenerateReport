@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using ReGenerateReport.Api.API;
 using ReGenerateReport.Api.Helper;
+using ReGenerateReport.Api.LogApiAnalytic;
 using ReGenerateReport.Api.Models;
 using ReGenerateReport.Api.Service;
 using System;
@@ -94,6 +95,8 @@ namespace ReGenerateReport.Api
             TokenHelper._Configuration = Configuration;
             ESignRequest._Configuration = Configuration;
             CommonHelper._Configuration = Configuration;
+            HelperLogFile._Configuration = Configuration;
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

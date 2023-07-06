@@ -1,7 +1,11 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,6 +13,8 @@ namespace ReGenerateReport.Api.LogApiAnalytic
 {
     public static class HelperLogFile
     {
+        static SqlConnection connection;
+        public static IConfiguration _Configuration;
         public static void CreateLog(DateTime currenDate, string refernceCode = null, string logId = null, string functionName = null, string exceptionText = null, System.Exception exception = null, string taskText = null, string policyNo = null)
         {
             try
@@ -238,6 +244,51 @@ namespace ReGenerateReport.Api.LogApiAnalytic
             catch (Exception)
             {
                 throw;
+            }
+        }
+        
+        public static void WriteLogDB(int sequence, string msg)
+        {
+            try
+            {
+                string sql = @"  Insert into [motordb].[dbo].[IPA_Log] (
+	                               [SubjectId]
+                                  ,[Subject]
+                                  ,[Process]
+                                  ,[Status]
+                                  ,[Message]
+                                  ,[CreateDate]
+                                  ,[CreateBy]) values (NEWID(),@seq,@ip,'',@msg,Getdate(),'TTT')";
+
+                IPHostEntry ip = Dns.GetHostEntry(Dns.GetHostName());
+                var ipAddress = ip.AddressList[0].ToString().Length > 15 ? ip.AddressList[1].ToString() : ip.AddressList[0].ToString();
+                var ipAdd = ipAddress.Length > 15 ? string.Empty : ipAddress;
+
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@msg", msg),
+                    new SqlParameter("@ip", ipAdd),
+                    new SqlParameter("@seq", sequence.ToString())
+                };
+
+                using (connection = new SqlConnection(_Configuration["ConnectionString:logdbConstr"].ToString().Trim()))
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        command.CommandType = System.Data.CommandType.Text;
+                        command.Parameters.AddRange(param);
+                        command.ExecuteNonQuery();
+                    }
+                    connection.Close();
+                }
+            }
+            finally
+            {
+                if (connection != null && connection.State == ConnectionState.Open)
+                {
+                    connection.Close();
+                }
             }
         }
     }

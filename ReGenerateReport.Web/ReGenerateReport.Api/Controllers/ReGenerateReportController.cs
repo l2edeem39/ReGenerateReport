@@ -287,6 +287,7 @@ namespace ReGenerateReport.Api.Controllers
 
         private string UploadPolicy_NonMotor(string pol_yr, string pol_br, string pol_no, string pol_pre, string templateId)
         {
+            var sequence = 0;
             int _statusCode = 404;
             string _message = "Not Found";
             bool flagconnfire = false;
@@ -311,6 +312,7 @@ namespace ReGenerateReport.Api.Controllers
             //connect database policy
             //Console.WriteLine("Start job schedule...");
             #region call log start job schedule 
+            HelperLogFile.WriteLogDB(sequence++, "Start AmitySubmitDocumentPolicyNonMotor Job Schedule");
             HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, "Start AmitySubmitDocumentPolicyNonMotor Job Schedule");
             #endregion
 
@@ -336,11 +338,11 @@ namespace ReGenerateReport.Api.Controllers
 
             try
             {
-
+                HelperLogFile.WriteLogDB(sequence++, $"Get list policy start : {DateTime.Now.ToString()}");
                 HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, $"Get list policy start : {DateTime.Now.ToString()}");
                 //Must call store get data
                 //Console.WriteLine("Get data from database...");
-
+                HelperLogFile.WriteLogDB(sequence++, $"Range date Start : ");
                 HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, $"Range date Start : "); //{CommonConfigs.StartDate}, End : {CommonConfigs.EndDate}");
 
                 using (SqlConnection connection = conn)
@@ -430,12 +432,12 @@ namespace ReGenerateReport.Api.Controllers
                                     data.fname = (string)dr["fname"].ToString();
                                     data.lname = (string)dr["lname"].ToString();
                                     data.ident_card = (string)dr["ident_card"].ToString();
-                                    data.period_from = dr["period_from"] != null ? DateTime.Parse((string)dr["period_from"]) : new DateTime();
-                                    data.period_to = dr["period_to"] != null ? DateTime.Parse((string)dr["period_to"]) : new DateTime();
+                                    data.period_from = dr["period_from"] != null ? DateTime.ParseExact((string)dr["period_from"], "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.ParseExact(new DateTime().ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                                    data.period_to = dr["period_to"] != null ? DateTime.ParseExact((string)dr["period_to"], "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.ParseExact(new DateTime().ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture);
                                     data.phone = (string)dr["phone"].ToString();
                                     data.e_email = (string)dr["e_email"].ToString();
                                     data.saleCode = (string)dr["saleCode"].ToString();
-                                    data.tr_date = dr["tr_date"] != null ? DateTime.Parse((string)dr["agree_date"]) : new DateTime();
+                                    data.tr_date = dr["tr_date"] != null ? DateTime.ParseExact((string)dr["tr_date"], "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.ParseExact(new DateTime().ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture);
                                     models.Add(data);
                                 }
                             }
@@ -469,6 +471,7 @@ namespace ReGenerateReport.Api.Controllers
                         {
                             #region call log api start
                             indexLog++;
+                            HelperLogFile.WriteLogDB(sequence++, $"Start request document policyNo : {model.PolicyNo} | Index [{indexLog}/{models.Count.ToString()}]");
                             HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, $"Start request document policyNo : {model.PolicyNo} | Index [{indexLog}/{models.Count.ToString()}]", model.PolicyNo);
                             #endregion
                             AlfrescoSearchResponse listFileLibrary = AlfrescoHelper.Search(model.PolicyNo, "NonMotor", logId, dateLog).Result;
@@ -502,6 +505,7 @@ namespace ReGenerateReport.Api.Controllers
                                 if (response.respStatus == "success")
                                 {
                                     //data upload document
+                                    HelperLogFile.WriteLogDB(sequence++, $"Prepare data upload to alfresco.");
                                     HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, $"Prepare data upload to alfresco.");
 
                                     byte[] contentFile = Convert.FromBase64String(response.signedPdf);
@@ -630,6 +634,7 @@ namespace ReGenerateReport.Api.Controllers
 
                                 #region call log api end
                                 string resjson = JsonConvert.SerializeObject(alfrescoResponse);
+                                HelperLogFile.WriteLogDB(sequence++, $"End request amity submit document policyNo : {model.PolicyNo}");
                                 HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, resjson);
                                 HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, $"End request amity submit document policyNo : {model.PolicyNo}");
                                 #endregion
@@ -705,6 +710,7 @@ namespace ReGenerateReport.Api.Controllers
             }
             catch (Exception ex)
             {
+                HelperLogFile.WriteLogDB(99, ex.Message);
                 HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, ex);
                 conn.Dispose();
                 if (flagconnfire)
