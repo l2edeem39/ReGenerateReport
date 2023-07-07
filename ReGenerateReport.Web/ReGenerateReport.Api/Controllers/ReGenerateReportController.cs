@@ -381,12 +381,12 @@ namespace ReGenerateReport.Api.Controllers
                                 data.fname = (string)dr["fname"].ToString();
                                 data.lname = (string)dr["lname"].ToString();
                                 data.ident_card = (string)dr["ident_card"].ToString();
-                                data.period_from = dr["period_from"] != null ? DateTime.Parse((string)dr["period_from"]) : new DateTime();
-                                data.period_to = dr["period_to"] != null ? DateTime.Parse((string)dr["period_to"]) : new DateTime();
+                                data.period_from = dr["period_from"] != null ? DateTime.ParseExact((string)dr["period_from"],"dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.ParseExact(new DateTime().ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                                data.period_to = dr["period_to"] != null ? DateTime.ParseExact((string)dr["period_to"], "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.ParseExact(new DateTime().ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture);
                                 data.phone = (string)dr["phone"].ToString();
                                 data.e_email = (string)dr["e_email"].ToString();
                                 data.saleCode = (string)dr["saleCode"].ToString();
-                                data.tr_date = dr["tr_date"] != null ? DateTime.Parse((string)dr["tr_date"]) : new DateTime();
+                                data.tr_date = dr["tr_date"] != null ? DateTime.ParseExact((string)dr["tr_date"], "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.ParseExact(new DateTime().ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture);
                                 models.Add(data);
                             }
                         }
@@ -811,11 +811,11 @@ namespace ReGenerateReport.Api.Controllers
                                 data.fname = (string)dr["fname"].ToString();
                                 data.lname = (string)dr["lname"].ToString();
                                 data.ident_card = (string)dr["ident_card"].ToString();
-                                data.period_from = dr["period_from"] != null ? DateTime.Parse((string)dr["period_from"]) : new DateTime();
-                                data.period_to = dr["period_to"] != null ? DateTime.Parse((string)dr["period_to"]) : new DateTime();
+                                data.period_from = dr["period_from"] != null ? DateTime.ParseExact((string)dr["period_from"], "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.ParseExact(new DateTime().ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                                data.period_to = dr["period_to"] != null ? DateTime.ParseExact((string)dr["period_to"], "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.ParseExact(new DateTime().ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture);
                                 data.phone = (string)dr["phone"].ToString();
                                 data.e_email = (string)dr["e_email"].ToString();
-                                data.agree_date = dr["agree_date"] != null ? DateTime.Parse((string)dr["agree_date"]) : new DateTime();
+                                data.agree_date = dr["agree_date"] != null ? DateTime.ParseExact((string)dr["agree_date"], "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.ParseExact(new DateTime().ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture);
                                 models.Add(data);
                             }
                         }
@@ -1162,12 +1162,12 @@ namespace ReGenerateReport.Api.Controllers
                                 data.fname = (string)dr["fname"].ToString();
                                 data.lname = (string)dr["lname"].ToString();
                                 data.ident_card = (string)dr["ident_card"].ToString();
-                                data.period_from = dr["period_from"] != null ? DateTime.Parse((string)dr["period_from"]) : new DateTime();
-                                data.period_to = dr["period_to"] != null ? DateTime.Parse((string)dr["period_to"]) : new DateTime();
+                                data.period_from = dr["period_from"] != null ? DateTime.ParseExact((string)dr["period_from"], "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.ParseExact(new DateTime().ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                                data.period_to = dr["period_to"] != null ? DateTime.ParseExact((string)dr["period_to"], "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.ParseExact(new DateTime().ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture);
                                 data.phone = (string)dr["phone"].ToString();
                                 data.e_email = (string)dr["e_email"].ToString();
                                 data.saleCode = (string)dr["saleCode"].ToString();
-                                data.tr_date = dr["tr_date"] != null ? DateTime.Parse((string)dr["tr_date"]) : new DateTime();
+                                data.tr_date = dr["tr_date"] != null ? DateTime.ParseExact((string)dr["tr_date"], "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.ParseExact(new DateTime().ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture);
                                 models.Add(data);
                             }
                         }
