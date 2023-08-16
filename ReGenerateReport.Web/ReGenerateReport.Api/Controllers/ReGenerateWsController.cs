@@ -57,27 +57,66 @@ namespace ReGenerateReport.Api.Controllers
 
             try
             {
-                var data = await _wsService.getLinkPolicy(req.PolicyNo, req.SaleCode);
+                var data = new WsGetLinkResponse();
+                var pol = _wsService.getPolicyType(req.PolicyNo);
+                string poltype = pol.polType;
+                string polyr = pol.polYr;
+                string polbr = pol.polBrCode;
+                string polno = pol.polNo;
+                string productClass = "5";
+                string flagOnline = "2";
+                string channel = "";
+                if (poltype == "VMI")
+                {
+                    if (productClass == "5")
+                    {
+                        if (req.SaleCode == "15445" || req.SaleCode == "15841" || req.SaleCode == "16184")
+                        {
+                            data = await _wsService.PolicyVMIType5noPrint(polyr, polbr, polno, req.SaleCode, flagOnline, productClass);
+                        }
+                        else
+                        {
+                            data = await _wsService.PolicyVMIType5(polyr, polbr, polno, req.SaleCode, flagOnline, channel);
+                        }
+                    }
+                    else if (productClass == "2" || productClass == "3")
+                    {
+                        if (req.SaleCode == "15445" || req.SaleCode == "15841" || req.SaleCode == "16184")
+                        {
+                            data = await _wsService.PolicyVMIType5noPrint(polyr, polbr, polno, req.SaleCode, flagOnline, productClass);
+                        }
+                        else
+                        {
+                            data = await _wsService.PolicyVMIType3(polyr, polbr, polno, req.SaleCode, flagOnline, channel);
+                        }
+                    }
+                }
+                else if (poltype == "CMI")
+                {
+
+                }
+                
+
                 if (data == null || data.linkPolicy == null)
                 {
                     statusCode = HttpStatus.NotFound;
                     Result.StatusCode = statusCode.ToString();
                     Result.Status = "NotFound";
-                    return StatusCode(statusCode, new { Result });
+                    return StatusCode(statusCode, Result);
                 }
 
                 //Result.StatusCode = statusCode.ToString();
                 //Result.Status = "OK";
                 //Result.linkPolicy = data.linkPolicy;
                 //Result.linkTax = data.linkTax;
-                return StatusCode(statusCode, new { data });
+                return StatusCode(statusCode, data);
             }
             catch (Exception ex)
             {
                 statusCode = HttpStatus.InternalServerError;
                 Result.StatusCode = statusCode.ToString();
                 Result.Status = ex.Message;
-                return StatusCode(statusCode, new { Result });
+                return StatusCode(statusCode, Result);
             }
         }
     }
