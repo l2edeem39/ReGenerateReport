@@ -84,6 +84,8 @@ namespace ReGenerateReport.Api
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IWsService, WsService>();
             services.AddScoped<IAbsoluteUriService, AbsoluteUriService>();
+            services.AddScoped<IPolicyReportService, PolicyReportService>();
+            services.AddScoped<ITaxinvoiceService, TaxinvoiceService>();
 
             //services.AddSwaggerGen(c =>
             //{
