@@ -1,0 +1,252 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+@*@Html.ActionLink("View Image", "PdfPartial")*@
+
+<!DOCTYPE html>
+
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <style type="text/css">
+        body {
+            font-family: Arial;
+            font-size: 10pt;
+        }
+
+        table {
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+        }
+
+            table th {
+                background-color: #F7F7F7;
+                color: #333;
+                font-weight: bold;
+            }
+
+            table th, table td {
+                padding: 5px;
+                border: 1px solid #ccc;
+            }
+
+        #pdf_container {
+            background: #ccc;
+            text-align: center;
+            display: none;
+            padding: 5px;
+            height: 820px;
+            overflow: auto;
+        }
+
+        .gap-3 {
+            margin-top: 10px
+        }
+
+        .stayleft {
+            margin-left: 1px
+        }
+
+        iframe {
+            border: 0;
+            bottom: 0;
+            height: 0px;
+            left: 0;
+            margin: 0;
+            padding: 0;
+            right: 0;
+            top: 0;
+            width: 100%;
+        }
+
+        .txt {
+            /*font-weight: bold;
+            font-family: "Times New Roman", Times, serif;*/
+            font-style: normal;
+        }
+    </style>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/js/bootstrap.js" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/pdf_viewer.min.css" type="text/css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-grid.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/switch-toggle.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/siteCss.css" />
+
+    @*<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Catamaran:400,100,200,300,500,600,700,800,900|Material+Icons'>*@
+
+</head>
+<body>
+    <br />
+    <div class="container">
+        <div class="form-group gap-3">
+            <span>UserName : </span><span style="color:red;font-weight: bold;">@ViewBag.HostName</span>
+            <input id="txtUserName" type="text" value=@ViewBag.HostName style="display:none" />
+        </div>
+        <div class="row gap-3">
+            <div class="col-sm-4 gap-3">
+                <input type="text" class="form-control" id="txtPolicyNo" placeholder="PolicyNo">
+            </div>
+            <div class="col-sm-4 gap-3">
+                <input type="text" class="form-control" id="txtSaleCode" placeholder="SaleCode">
+            </div>
+            <div class="col-sm-2 gap-3">
+                <input type="button" id="getData" class="btn btn-primary col-sm-12" onclick="GetData()" value="Send" />
+            </div>
+        </div>
+        <div class="form-group gap-3" style="margin-top:20px">
+            <div class="row">
+                <div class="col-sm-8">
+                    <label><b>Response</b></label>
+                    <label id="txtResponse" style="color:red"></label>
+                </div>
+            </div>
+            <div class="row gap-3">
+                <div class="container">
+                    <div class="wrap">
+                        <label>Link Policy</label>
+                        <div class="box text.single-line overflow-wrap--anywhere">
+                            <p id="txtLinkPolicy" data-copy-text="" />
+                        </div>
+                        <label>Link Tax</label>
+                        <div class="box text.single-line overflow-wrap--anywhere">
+                            <p id="txtLinkTax" data-copy-text="" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="~/lib/pdf/pdf.min.js"></script>
+
+
+    <script type="text/javascript">
+        function GetData() {
+            document.getElementById('getData').disabled = true;
+            document.getElementById('getData').value = 'Sending...';
+
+            var strPolicyNo = document.getElementById('txtPolicyNo').value
+            var strSaleCode = document.getElementById('txtSaleCode').value
+            var strUser = document.getElementById('txtUserName').value
+
+            var url = "@Url.Action("GetLinkWSPolicy", "Home")" + "?policyNo=" + strPolicyNo + "&saleCode=" + strSaleCode + "&strUser=" + strUser + "";
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+
+            xhr.onreadystatechange = function (e) {
+                //console.log(xhr.response);
+                if (this.status == 200) {
+                    if (this.readyState == 4) {
+                        var res = JSON.parse(xhr.response);
+                        if (res.statusCode == 200) {
+                            document.getElementById("txtLinkPolicy").innerText = res.linkPolicy;
+                            document.getElementById("txtLinkTax").innerText = res.linkTax;
+                            document.getElementById("txtResponse").innerHTML = '';
+                        }
+                        else {
+                            var msg = res.statusCode + ' : ' + res.status;
+                            document.getElementById("txtResponse").innerHTML = ' Status ' + msg;
+                        }
+                    }
+                }
+                else {
+                    var resError = JSON.parse(xhr.response);
+                    var msg = resError.statusCode + ' : ' + resError.status;
+                    document.getElementById("txtResponse").innerHTML = ' Status ' + msg;
+                }
+                document.getElementById('getData').value = 'Send';
+                document.getElementById('getData').disabled = false;
+            };
+            xhr.send();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            copyText.init()
+        });
+
+        var copyText = {
+            init: function () {
+                if (document.querySelectorAll('[data-copy-text]').length) {
+                    var cp = document.querySelectorAll('[data-copy-text]');
+
+                    for (var i = 0, l = cp.length; i < l; i++) {
+                        copyText.addCopy(cp[i]);
+                    }
+                }
+            },
+            addCopy: function (el) {
+                if (typeof el !== 'undifined') {
+                    var parent = el.parentNode;
+                    if (!parent.querySelectorAll('span.copy-btn').length && window.getSelection) {
+                        var cpBtn = document.createElement('I');
+
+                        parent.setAttribute('style', 'position:relative');
+                        parent.appendChild(cpBtn);
+
+                        cpBtn.classList.add('material-icons');
+                        cpBtn.textContent = 'content_copy';
+                        cpBtn.setAttribute('title', 'Copy Text');
+
+                        copyText.addCopyEvent(cpBtn, el);
+                    }
+                }
+            },
+            addCopyEvent: function (btn, el) {
+                var coppied = false;
+                var timer = 0;
+
+                function copyText() {
+                    function showCheckmark() {
+                        btn.textContent = 'check';
+                        btn.classList.add('active');
+                    }
+
+                    function hideCheckmark() {
+                        btn.classList.remove('active');
+                        btn.textContent = 'content_copy';
+                        timer = 0;
+                    }
+
+                    if (timer === 0) {
+                        if (window.getSelection) {
+                            var selection = window.getSelection();
+                            var range = document.createRange();
+                            range.selectNodeContents(el);
+                            selection.removeAllRanges();
+                            selection.addRange(range);
+
+                            try {
+                                document.execCommand('copy');
+                                coppied = true;
+                            } catch (err) {
+                                console.error(err);
+                            }
+
+                            selection.removeAllRanges();
+                        } else {
+                            console.error('your browser does not support copy');
+                        }
+
+                        if (coppied) {
+                            clearTimeout(timer);
+                            showCheckmark();
+                            timer = setTimeout(hideCheckmark, 2000);
+                        }
+                    }
+                }
+
+                if (typeof btn !== 'undifined' && typeof el !== 'undifined') {
+                    btn.addEventListener('click', copyText, false);
+                }
+            },
+        }
+    </script>
+
+</body>
+</html>

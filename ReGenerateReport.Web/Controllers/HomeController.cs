@@ -156,6 +156,13 @@ namespace ReGenerateReport.Web.Controllers
         {
             return View();
         }
+        public IActionResult WSPolicy()
+        {
+            var hostEntry = Dns.GetHostEntry(GetIp());
+            String hostName = hostEntry.HostName;
+            ViewBag.HostName = hostName;
+            return View();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
@@ -202,6 +209,48 @@ namespace ReGenerateReport.Web.Controllers
                     message = ex.Message
                 };
                 return res;
+            }
+        }
+
+        public async Task<WsGetLinkResponse> GetLinkWSPolicy(string policyNo, string saleCode, string strUser)
+        {
+            WsGetLinkResponse WebResult = new WsGetLinkResponse();
+            try
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (var client = new HttpClient())
+                    {
+                        string Endpoint = _config.GetSection("DefaultUrlWsPolicy").Value.ToString();
+                        ReqPolicy RequestData = new ReqPolicy();
+                        RequestData.PolicyNo = policyNo.ToString();
+                        RequestData.SaleCode = saleCode.ToString();
+                        string JsonRequest = JsonConvert.SerializeObject(RequestData);
+                        StringContent content = new StringContent(JsonRequest, Encoding.UTF8, "application/json");
+                        client.DefaultRequestHeaders.Add("Authorization", $"Basic {Base64Encode($"{strUser}:{""}")}");
+                        using (HttpResponseMessage HttpResponse = client.PostAsync(Endpoint, content).Result)
+                        {
+                            if (HttpResponse.StatusCode == HttpStatusCode.OK)
+                            {
+                                var responseContent = await HttpResponse.Content.ReadAsStringAsync();
+                                var reportResponse = JsonConvert.DeserializeObject<WsGetLinkResponse>(responseContent);
+                                return reportResponse;
+                            }
+                            else
+                            {
+                                var responseContent = await HttpResponse.Content.ReadAsStringAsync();
+                                var reportResponse = JsonConvert.DeserializeObject<WsGetLinkResponse>(responseContent);
+                                return reportResponse;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                WebResult.StatusCode = "500";
+                WebResult.Status = ex.Message;
+                return WebResult;
             }
         }
 
