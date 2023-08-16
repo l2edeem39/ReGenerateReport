@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using ReGenerateReport.Api.API;
 using ReGenerateReport.Api.Helper;
@@ -32,6 +34,16 @@ namespace ReGenerateReport.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                //var supportedCultures = Configuration.GetSection("Localization:SupportedCultures").Get<string[]>();
+                var defaultCulture = Configuration.GetValue<string>("Localization:DefaultCulture");
+
+                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture(defaultCulture);
+                //options.SupportedCultures = supportedCultures;
+                //options.SupportedUICultures = supportedCultures;
+            });
 
 
             //services.AddTransient<IUserRepository, UserRepository>();
@@ -70,6 +82,8 @@ namespace ReGenerateReport.Api
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IWsService, WsService>();
+            services.AddScoped<IAbsoluteUriService, AbsoluteUriService>();
 
             //services.AddSwaggerGen(c =>
             //{
@@ -96,6 +110,9 @@ namespace ReGenerateReport.Api
             ESignRequest._Configuration = Configuration;
             CommonHelper._Configuration = Configuration;
             HelperLogFile._Configuration = Configuration;
+
+            var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(options.Value);
 
             if (env.IsDevelopment())
             {

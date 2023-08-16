@@ -12,6 +12,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Web;
 using Microsoft.Extensions.Configuration;
+using System.Net;
 
 namespace ReGenerateReport.Api.Helper
 {
@@ -185,6 +186,55 @@ namespace ReGenerateReport.Api.Helper
                 }
                 HelperLogFile.CreateLog(dateLog, DateTime.Now.ToString(), logId != Guid.Empty ? logId.ToString() : null, null, null, null, $"ESignDocument fail : StatusCode => " + exMsg + innerExMsg);  //+ httpExceptionCode + " : " + exMsg + innerExMsg);
                 throw new Exception("ESignDocument fail : StatusCode => " + exMsg + innerExMsg);  //+ httpExceptionCode + " : " + exMsg + innerExMsg);
+            }
+        }
+
+        public static ESignResponse ESignDocument(ESignRequest requestData)
+        {
+            try
+            {
+                ServicePointManager.SecurityProtocol =
+                    SecurityProtocolType.Tls12 |
+                    SecurityProtocolType.Tls11 |
+                    SecurityProtocolType.Tls;
+                ESignResponse Response = new ESignResponse();
+                HttpClient Client = new HttpClient();
+
+                //Get Configuration
+                string SingEndpoint = _Configuration["Alfresco:ESignEndpoint"];   //ConfigurationManager.AppSettings["ESignEndpoint"].ToString();
+                string Token = _Configuration["Alfresco:ESignToken"];   //ConfigurationManager.AppSettings["Token"].ToString();
+
+                //Add Authorization To Header
+                Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Token);
+
+                //Convert Class to JSON
+                string RequestESign = JsonConvert.SerializeObject(requestData);
+
+                //Set Content Type and Endcoding
+                StringContent content = new StringContent(RequestESign, Encoding.UTF8, "application/json");
+
+                //Call API
+                var Result = Client.PostAsync(SingEndpoint, content).Result;
+
+                //Get Result
+                if (Result.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    Response = JsonConvert.DeserializeObject<ESignResponse>(Result.Content.ReadAsStringAsync().Result);
+                }
+                else
+                {
+
+                    var Exception = JsonConvert.DeserializeObject<ESingResponseException>(Result.Content.ReadAsStringAsync().Result);
+                    Response.statusCode = Exception.statusCode;
+                    Response.status = Exception.status;
+                    Response.statusDescription = Exception.statusDescription;
+                }
+
+                return Response;
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
     }

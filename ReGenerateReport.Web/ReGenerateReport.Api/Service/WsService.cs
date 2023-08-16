@@ -1,0 +1,290 @@
+﻿using Dapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using ReGenerateReport.Api.Helper;
+using ReGenerateReport.Api.Models;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace ReGenerateReport.Api.Service
+{
+    public class WsService : IWsService
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration _Configuration;
+        private readonly IAbsoluteUriService _absoluteUriService;
+
+        public WsService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IAbsoluteUriService absoluteUriService)
+        {
+            _httpContextAccessor = httpContextAccessor;
+            _Configuration = configuration;
+            _absoluteUriService = absoluteUriService;
+        }
+
+        public async Task<WsGetLinkResponse> getLinkPolicy(string policy, string sale_code)
+        {
+            WsGetLinkResponse link = new WsGetLinkResponse();
+            //1. Check ข้อมูล DB ว่ามีข้อมูลไหม
+            var pol = getPolicyType(policy);
+            link.polType = pol.polType;
+            link.polYr = pol.polYr;
+            link.polBr = pol.polBrCode;
+            link.polNo = pol.polNo;
+
+            var chkdb = await CheckDataDB(link);
+            if (chkdb.StatusCode != HttpStatus.OK.ToString())
+            {
+                return chkdb;
+            }
+
+            //2. Check File PDF ใน Server
+            var chkFile = await CheckFilePDF(link, sale_code, "");
+            if (chkFile.StatusCode != HttpStatus.OK.ToString())
+            {
+                return chkFile;
+            }
+            else
+            {
+                link = chkFile;
+            }
+
+            //3. Check File PDF ว่าทำการ Sign
+            link = await CheckFileSign(link, sale_code);
+
+            return link;
+        }
+
+        public GetPolicy getPolicyType(string policy)
+        {
+            GetPolicy pol = new GetPolicy();
+            string[] policyS = policy.Split("/กธ/");
+            if (policyS[policyS.Count() - 1].Length == 6)
+            {
+                pol.polType = "VMI";
+                pol.polNo = policyS[policyS.Count() - 1];
+                pol.polYr = policyS[0].Substring(0, 2);
+                pol.polBrCode = policyS[0].Substring(2, 3);
+            }
+            else
+            {
+                pol.polType = "CMI";
+                pol.polNo = policyS[policyS.Count() - 1];
+                pol.polYr = policyS[0].Substring(0, 2);
+                pol.polBrCode = policyS[0].Substring(2, 3);
+            }
+            return pol;
+        }
+
+        //Check ข้อมูล DB ว่ามีข้อมูลไหม
+        public async Task<WsGetLinkResponse> CheckDataDB(WsGetLinkResponse req)
+        {
+            WsGetLinkResponse resLink = new WsGetLinkResponse();
+            try
+            {
+                var data = "";
+                if (req.polType == "VMI")
+                {
+                    string connectionString = _Configuration["ConnectionString:wsvmimotordbConstr"];
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        data = connection.QueryFirst<string>($"select COUNT(*) as CountData from vmi_policy where policy_year = '{req.polYr}' and policy_branch = '{req.polBr}' and policy_no = '{req.polNo}'");
+                    }
+                }
+                else
+                {
+                    string connectionString = _Configuration["ConnectionString:wscmimotordbConstr"];
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        data = connection.QueryFirst<string>($"select COUNT(*) as CountData from maspol_tesco where yr = '{req.polYr}' and br_code = '{req.polBr}' and pol_no = '{req.polNo}'");
+                    }
+                }
+
+                if (data == "0")
+                {
+                    resLink.StatusCode = "404";
+                    resLink.Status = "ไม่พบข้อมูล Database";
+                    resLink.linkTax = "";
+                    resLink.linkPolicy = "";
+                }
+                else
+                {
+                    resLink.StatusCode = "200";
+                    resLink.Status = "";
+                    resLink.linkTax = "";
+                    resLink.linkPolicy = "";
+                }
+                return resLink;
+            }
+            catch (Exception ex)
+            {
+                resLink.StatusCode = "500";
+                resLink.Status = "Exception Check Data DB : " + ex.Message;
+                resLink.linkTax = "";
+                resLink.linkPolicy = "";
+                return resLink;
+            }
+        }
+
+        //Check File PDF ใน Server ว่ามีอยู่ไหม
+        public async Task<WsGetLinkResponse> CheckFilePDF(WsGetLinkResponse req, string sale_code, string isCopy)
+        {
+            WsGetLinkResponse resLink = new WsGetLinkResponse();
+            try
+            {
+                string filename = string.Empty, ls_path = string.Empty, path = string.Empty, path_Sign = string.Empty;
+                string filename_Tax = string.Empty, ls_path_Tax = string.Empty, path_Tax = string.Empty, path_Tax_Sign = string.Empty;
+                string encrypt_name = string.Empty;
+                if (req.polType == "VMI")
+                {
+                    //Policy
+                    if (isCopy == "true") ls_path = UtilityBusiness.GetPolicyPath(req.polBr, sale_code, "VMIC");
+                    else ls_path = UtilityBusiness.GetPolicyPath(req.polBr, sale_code, "EVMI");
+                    encrypt_name = UtilityBusiness.MD5Hash("VMIPOL" + req.polYr.ToString() + req.polBr.ToString() + req.polNo.ToString());
+                    filename = encrypt_name + ".pdf";
+                    path = ls_path + filename;
+                    path_Sign = ls_path + "Sign_" + filename;
+
+                    //Tax
+                    ls_path_Tax = UtilityBusiness.GetTaxinvoicePath(req.polBr, sale_code, "EVMI");
+
+                    var encrypt_name_Tax = UtilityBusiness.MD5Hash("VMITAX" + req.polYr.ToString() + req.polBr.ToString() + req.polNo.ToString());
+                    filename_Tax = encrypt_name_Tax + ".pdf";
+                    path_Tax = ls_path_Tax + filename_Tax;
+                    path_Tax_Sign = ls_path_Tax + "Sign_" + filename_Tax;
+
+                    if (!File.Exists(path))
+                    {
+                        if (!File.Exists(path_Sign))
+                        {
+                            resLink.StatusCode = "404";
+                            resLink.Status = "ไม่พบ File Policy";
+                            resLink.linkTax = "";
+                            resLink.linkPolicy = "";
+                            return resLink;
+                        }
+                    }
+
+                    if (!File.Exists(path_Tax))
+                    {
+                        if (!File.Exists(path_Tax_Sign))
+                        {
+                            resLink.StatusCode = "404";
+                            resLink.Status = "ไม่พบ File Tax";
+                            resLink.linkTax = "";
+                            resLink.linkPolicy = "";
+                            return resLink;
+                        }
+                    }
+
+                    resLink.polType = req.polType;
+                    resLink.polYr = req.polYr;
+                    resLink.polBr = req.polBr;
+                    resLink.polNo = req.polNo;
+                    resLink.StatusCode = "200";
+                    resLink.FileNamePolicy = filename;
+                    resLink.FileNameTax = filename_Tax;
+                    resLink.Status = "";
+                    resLink.linkTax = "";
+                    resLink.linkPolicy = "";
+                }
+                else if (req.polType == "CMI")
+                {
+
+                }
+
+                return resLink;
+            }
+            catch (Exception ex)
+            {
+                resLink.StatusCode = "500";
+                resLink.Status = "Exception Check File PDF : " + ex.Message;
+                resLink.linkTax = "";
+                resLink.linkPolicy = "";
+                return resLink;
+            }
+        }
+
+        //Check File PDF ว่าทำการ Sign หรือยัง
+        public async Task<WsGetLinkResponse> CheckFileSign(WsGetLinkResponse req, string sale_code)
+        {
+            WsGetLinkResponse resLink = new WsGetLinkResponse();
+            try
+            {
+                if (req.polType == "VMI")
+                {
+                    string originalPath = _absoluteUriService.GetAbsoluteUri(); // new Uri(HttpContextAccessor.Current.Request.Url.AbsoluteUri).OriginalString;
+                    string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/"));
+                    string policyUrl = string.Empty, receiptUrl = string.Empty;
+
+                    //string parentDirectory = originalPath.Substring(0, 5) == "https" ? originalPath.Substring(0, originalPath.LastIndexOf("/")) : originalPath.Substring(0, originalPath.LastIndexOf("/")).Replace("http", "https");
+                    policyUrl = parentDirectory + "/report/EPolicyFormVMI/" + DateHelper.GetCurYear() + "/" + req.polBr + "/" + sale_code + "/" + DateHelper.GetCurMonth() + "/" + DateHelper.GetCurDay() + "/Sign_" + req.FileNamePolicy;
+                    receiptUrl = parentDirectory + "/report/ETaxinvoiceFormVMI/" + DateHelper.GetCurYear() + "/" + req.polBr + "/" + sale_code + "/" + DateHelper.GetCurMonth() + "/" + DateHelper.GetCurDay() + "/Sign_" + req.FileNameTax;
+
+                    string pathToFilespdf = string.Empty, pathToFilespdfSign = string.Empty, pathToFilestax = string.Empty, pathToFilestaxSign = string.Empty;
+
+                    //pathToFilespdf = HttpContext.Current.Server.MapPath("~/report/PolicyFormVMICopy/" + DateHelper.GetCurYear() + "/" + req.polBr + "/" + sale_code + "/" + DateHelper.GetCurMonth() + "/" + DateHelper.GetCurDay() + "/" + req.FileNamePolicy);
+                    //pathToFilespdfSign = HttpContext.Current.Server.MapPath("~/report/PolicyFormVMICopy/" + DateHelper.GetCurYear() + "/" + req.polBr + "/" + sale_code + "/" + DateHelper.GetCurMonth() + "/" + DateHelper.GetCurDay() + "/Sign_" + req.FileNamePolicy);
+                    pathToFilespdf = "~/report/EPolicyFormVMI/" + DateHelper.GetCurYear() + "/" + req.polBr + "/" + sale_code + "/" + DateHelper.GetCurMonth() + "/" + DateHelper.GetCurDay() + "/" + req.FileNamePolicy;
+                    pathToFilespdfSign = "~/report/EPolicyFormVMI/" + DateHelper.GetCurYear() + "/" + req.polBr + "/" + sale_code + "/" + DateHelper.GetCurMonth() + "/" + DateHelper.GetCurDay() + "/Sign_" + req.FileNamePolicy;
+
+                    if (File.Exists(pathToFilespdfSign))
+                    {
+                        //ข้อมูล Sign เรียบร้อย
+                        resLink.linkPolicy = policyUrl;
+                    }
+                    else
+                    {
+                        if (File.Exists(pathToFilespdf))
+                        {
+                            SignHelperWarpper.SignPdfToFile(pathToFilespdf, pathToFilespdfSign, string.Empty, req.polYr + req.polBr + "/กธ/" + req.polNo);
+                            resLink.linkPolicy = policyUrl;
+                        }
+                    }
+
+                    //pathToFilestax = HttpContext.Current.Server.MapPath("~/report/TaxinvoiceFormVMICopy/" + DateHelper.GetCurYear() + "/" + req.polBr + "/" + sale_code + "/" + DateHelper.GetCurMonth() + "/" + DateHelper.GetCurDay() + "/" + req.FileNameTax);
+                    //pathToFilestaxSign = HttpContext.Current.Server.MapPath("~/report/TaxinvoiceFormVMICopy/" + DateHelper.GetCurYear() + "/" + req.polBr + "/" + sale_code + "/" + DateHelper.GetCurMonth() + "/" + DateHelper.GetCurDay() + "/Sign_" + req.FileNameTax);
+
+                    pathToFilestax = "~/report/ETaxinvoiceFormVMI/" + DateHelper.GetCurYear() + "/" + req.polBr + "/" + sale_code + "/" + DateHelper.GetCurMonth() + "/" + DateHelper.GetCurDay() + "/" + req.FileNameTax;
+                    pathToFilestaxSign = "~/report/ETaxinvoiceFormVMI/" + DateHelper.GetCurYear() + "/" + req.polBr + "/" + sale_code + "/" + DateHelper.GetCurMonth() + "/" + DateHelper.GetCurDay() + "/Sign_" + req.FileNameTax;
+
+                    if (File.Exists(pathToFilestaxSign))
+                    {
+                        //ข้อมูล Sign เรียบร้อย
+                        resLink.linkTax = receiptUrl;
+                    }
+                    else
+                    {
+                        if (File.Exists(pathToFilestax))
+                        {
+                            SignHelperWarpper.SignPdfToFile(pathToFilestax, pathToFilestaxSign, string.Empty, req.polBr + "-" + req.polNo + "/" + req.polYr);
+                            resLink.linkTax = receiptUrl;
+                        }
+                    }
+
+                    resLink.StatusCode = "200";
+                    resLink.Status = "OK";
+                }
+                else if (req.polType == "CMI")
+                {
+
+                }
+                
+
+
+                return resLink;
+            }
+            catch (Exception ex)
+            {
+                resLink.StatusCode = "500";
+                resLink.Status = "Exception File PDF Sign : " + ex.Message;
+                resLink.linkTax = "";
+                resLink.linkPolicy = "";
+                return resLink;
+            }
+        }
+    }
+}
