@@ -101,7 +101,6 @@
             <div class="row">
                 <div class="col-sm-8">
                     <label><b>Response</b></label>
-                    <label id="txtResponse" style="color:red"></label>
                 </div>
             </div>
             <div class="row gap-3">
@@ -117,6 +116,9 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="row gap-3">
+                <label id="txtResponse" style="color:red"></label>
             </div>
         </div>
     </div>
@@ -149,10 +151,12 @@
                             document.getElementById("txtLinkTax").innerText = res.linkTax;
                             var msg = res.statusCode + ' : ' + res.status;
                             document.getElementById("txtResponse").innerHTML = ' Status ' + msg;
+                            document.getElementById("txtResponse").style.color = "green";
                         }
                         else {
                             var msg = res.statusCode + ' : ' + res.status;
                             document.getElementById("txtResponse").innerHTML = ' Status ' + msg;
+                            document.getElementById("txtResponse").style.color = "red";
                         }
                     }
                 }
@@ -160,6 +164,7 @@
                     var resError = JSON.parse(xhr.response);
                     var msg = resError.statusCode + ' : ' + resError.status;
                     document.getElementById("txtResponse").innerHTML = ' Status ' + msg;
+                    document.getElementById("txtResponse").style.color = "red";
                 }
                 document.getElementById('getData').value = 'Send';
                 document.getElementById('getData').disabled = false;
