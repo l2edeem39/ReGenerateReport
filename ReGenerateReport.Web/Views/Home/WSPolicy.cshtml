@@ -147,7 +147,8 @@
                         if (res.statusCode == 200) {
                             document.getElementById("txtLinkPolicy").innerText = res.linkPolicy;
                             document.getElementById("txtLinkTax").innerText = res.linkTax;
-                            document.getElementById("txtResponse").innerHTML = '';
+                            var msg = res.statusCode + ' : ' + res.status;
+                            document.getElementById("txtResponse").innerHTML = ' Status ' + msg;
                         }
                         else {
                             var msg = res.statusCode + ' : ' + res.status;
