@@ -42,14 +42,7 @@ namespace ReGenerateReport.Web.Controllers
             //string imageDataURL = string.Format("data:application/pdf;base64,{0}", imageBase64Data);
             //ViewBag.ImageData = imageDataURL;
             //ViewBag.Data = imageDataURL;
-            
-            string ReGenerateItext = _config.GetSection("ReGenerateItext").Value;
-            string WSPolicyRepair = _config.GetSection("WSPolicyRepair").Value;
-            ViewData["MenuControl"] = new MenuModel()
-            {
-                ReGenerateItext = ReGenerateItext,
-                WSPolicyRepair = WSPolicyRepair,
-            };
+ 
             ViewBag.HostName = hostName;
             return View();
         }
@@ -170,6 +163,26 @@ namespace ReGenerateReport.Web.Controllers
             String hostName = hostEntry.HostName;
             ViewBag.HostName = hostName;
             return View();
+        }
+        public IActionResult Default()
+        {
+            var hostEntry = Dns.GetHostEntry(GetIp());
+            String hostName = hostEntry.HostName;
+            ViewBag.HostName = hostName;
+            string ReGenerateItext = _config.GetSection("Menu_ReGenerateItext").Value.ToString();
+            string WSPolicyRepair = _config.GetSection("Menu_WSPolicyRepair").Value.ToString();
+            if (ReGenerateItext == "true")
+            {
+                return View("Index");
+            }
+            else if (WSPolicyRepair == "true")
+            {
+                return View("WSPolicy");
+            }
+            else
+            {
+                return View();
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
