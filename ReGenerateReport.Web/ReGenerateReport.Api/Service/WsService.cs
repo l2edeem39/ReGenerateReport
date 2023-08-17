@@ -208,14 +208,14 @@ namespace ReGenerateReport.Api.Service
                     }
                     else
                     {
-                        link.StatusCode = HttpStatus.NotFound.ToString();
+                        link.StatusCode = HttpStatus.OK.ToString();
                         link.Status = "Not Found Tax File PDF " + polno;
                         return link;
                     }
                 }
 
                 link.StatusCode = HttpStatus.OK.ToString();
-                link.Status = "OK";
+                link.Status = "Successfully";
             }
             else
             {
@@ -255,7 +255,7 @@ namespace ReGenerateReport.Api.Service
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
 
                 link.StatusCode = HttpStatus.OK.ToString();
-                link.Status = "OK";
+                link.Status = "Successfully";
                 link.linkPolicy = policyUrl;
                 link.linkTax = receiptUrl;
             }
@@ -379,13 +379,13 @@ namespace ReGenerateReport.Api.Service
                         SignHelperWarpper.SignPdfToFile(pathToFilestax, pathToFilestaxSign, string.Empty, polbr + "-" + polno + "/" + polyr);
                         link.linkTax = receiptUrl;
                     }
-                    link.StatusCode = HttpStatus.NotFound.ToString();
+                    link.StatusCode = HttpStatus.OK.ToString();
                     link.Status = "Not Found Tax File PDF " + polno;
                     return link;
                 }
 
                 link.StatusCode = HttpStatus.OK.ToString();
-                link.Status = "OK";
+                link.Status = "Successfully";
             }
             else
             {
@@ -425,7 +425,7 @@ namespace ReGenerateReport.Api.Service
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
 
                 link.StatusCode = HttpStatus.OK.ToString();
-                link.Status = "OK";
+                link.Status = "Successfully";
                 link.linkPolicy = policyUrl;
                 link.linkTax = receiptUrl;
             }
@@ -554,14 +554,14 @@ namespace ReGenerateReport.Api.Service
                     }
                     else
                     {
-                        link.StatusCode = HttpStatus.NotFound.ToString();
+                        link.StatusCode = HttpStatus.OK.ToString();
                         link.Status = "Not Found Tax File PDF " + polno;
                         return link;
                     }
                 }
 
                 link.StatusCode = HttpStatus.OK.ToString();
-                link.Status = "OK";
+                link.Status = "Successfully";
             }
             else
             {
@@ -590,7 +590,7 @@ namespace ReGenerateReport.Api.Service
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
 
                 link.StatusCode = HttpStatus.OK.ToString();
-                link.Status = "OK";
+                link.Status = "Successfully";
                 link.linkPolicy = policyUrl;
                 link.linkTax = receiptUrl;
             }
@@ -719,14 +719,14 @@ namespace ReGenerateReport.Api.Service
                     }
                     else
                     {
-                        link.StatusCode = HttpStatus.NotFound.ToString();
+                        link.StatusCode = HttpStatus.OK.ToString();
                         link.Status = "Not Found Tax File PDF " + polno;
                         return link;
                     }
                 }
 
                 link.StatusCode = HttpStatus.OK.ToString();
-                link.Status = "";
+                link.Status = "Successfully";
             }
             else
             {
@@ -762,7 +762,7 @@ namespace ReGenerateReport.Api.Service
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
 
                 link.StatusCode = HttpStatus.OK.ToString();
-                link.Status = "";
+                link.Status = "Successfully";
                 link.linkPolicy = policyUrl;
                 link.linkTax = receiptUrl;
             }
@@ -891,14 +891,14 @@ namespace ReGenerateReport.Api.Service
                     }
                     else
                     {
-                        link.StatusCode = HttpStatus.NotFound.ToString();
+                        link.StatusCode = HttpStatus.OK.ToString();
                         link.Status = "Not Found Tax File PDF " + polno;
                         return link;
                     }
                 }
 
                 link.StatusCode = HttpStatus.OK.ToString();
-                link.Status = "OK";
+                link.Status = "Successfully";
             }
             else
             {
@@ -938,7 +938,7 @@ namespace ReGenerateReport.Api.Service
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
 
                 link.StatusCode = HttpStatus.OK.ToString();
-                link.Status = "OK";
+                link.Status = "Successfully";
                 link.linkPolicy = policyUrl;
                 link.linkTax = receiptUrl;
             }
@@ -1145,7 +1145,7 @@ namespace ReGenerateReport.Api.Service
                             }
                             else
                             {
-                                link.StatusCode = HttpStatus.NotFound.ToString();
+                                link.StatusCode = HttpStatus.OK.ToString();
                                 link.Status = "Not Found Tax File PDF " + polno;
                                 return link;
                             }
@@ -1153,7 +1153,7 @@ namespace ReGenerateReport.Api.Service
                     }
 
                     link.StatusCode = HttpStatus.OK.ToString();
-                    link.Status = "OK";
+                    link.Status = "Successfully";
                     return link;
                 }
                 else
@@ -1199,7 +1199,7 @@ namespace ReGenerateReport.Api.Service
                     string receiptUrl = parentDirectory + parentDirectory_path_Tax + dataYearTax + "/" + polbr + "/" + sale_code + "/" + dataMonthTax + "/" + dataDayTax + "/" + filename_tax;
 
                     link.StatusCode = HttpStatus.OK.ToString();
-                    link.Status = "OK";
+                    link.Status = "Successfully";
                     link.linkPolicy = policyUrl;
                     link.linkTax = receiptUrl;
                     return link;
