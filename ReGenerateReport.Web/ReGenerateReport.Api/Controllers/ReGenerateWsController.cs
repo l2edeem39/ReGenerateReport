@@ -116,7 +116,7 @@ namespace ReGenerateReport.Api.Controllers
                     }
                 }
 
-                if (data == null || data.linkPolicy == null)
+                if (data == null || data.StatusCode == null)
                 {
                     statusCode = HttpStatus.NotFound;
                     Result.StatusCode = statusCode.ToString();
