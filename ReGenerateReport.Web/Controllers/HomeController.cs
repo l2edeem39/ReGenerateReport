@@ -42,6 +42,14 @@ namespace ReGenerateReport.Web.Controllers
             //string imageDataURL = string.Format("data:application/pdf;base64,{0}", imageBase64Data);
             //ViewBag.ImageData = imageDataURL;
             //ViewBag.Data = imageDataURL;
+            
+            string ReGenerateItext = _config.GetSection("ReGenerateItext").Value;
+            string WSPolicyRepair = _config.GetSection("WSPolicyRepair").Value;
+            ViewData["MenuControl"] = new MenuModel()
+            {
+                ReGenerateItext = ReGenerateItext,
+                WSPolicyRepair = WSPolicyRepair,
+            };
             ViewBag.HostName = hostName;
             return View();
         }
@@ -212,7 +220,7 @@ namespace ReGenerateReport.Web.Controllers
             }
         }
 
-        public async Task<WsGetLinkResponse> GetLinkWSPolicy(string policyNo, string saleCode, string strUser)
+        public async Task<WsGetLinkResponse> GetLinkWSPolicy(string policyNo, string strUser)
         {
             WsGetLinkResponse WebResult = new WsGetLinkResponse();
             try
@@ -224,7 +232,7 @@ namespace ReGenerateReport.Web.Controllers
                         string Endpoint = _config.GetSection("DefaultUrlWsPolicy").Value.ToString();
                         ReqPolicy RequestData = new ReqPolicy();
                         RequestData.PolicyNo = policyNo.ToString();
-                        RequestData.SaleCode = saleCode.ToString();
+                        //RequestData.SaleCode = saleCode.ToString();
                         string JsonRequest = JsonConvert.SerializeObject(RequestData);
                         StringContent content = new StringContent(JsonRequest, Encoding.UTF8, "application/json");
                         client.DefaultRequestHeaders.Add("Authorization", $"Basic {Base64Encode($"{strUser}:{""}")}");

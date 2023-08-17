@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace ReGenerateReport.Web.Models
 {
-    public class ReqPolicy
+    public class MenuModel
     {
-        public string PolicyNo { get; set; }
+        public string ReGenerateItext { get; set; }
+        public string WSPolicyRepair { get; set; }
     }
 }

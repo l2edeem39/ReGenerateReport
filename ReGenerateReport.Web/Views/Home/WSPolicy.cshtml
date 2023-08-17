@@ -90,9 +90,9 @@
             <div class="col-sm-4 gap-3">
                 <input type="text" class="form-control" id="txtPolicyNo" placeholder="PolicyNo">
             </div>
-            <div class="col-sm-4 gap-3">
+            @*<div class="col-sm-4 gap-3">
                 <input type="text" class="form-control" id="txtSaleCode" placeholder="SaleCode">
-            </div>
+            </div>*@
             <div class="col-sm-2 gap-3">
                 <input type="button" id="getData" class="btn btn-primary col-sm-12" onclick="GetData()" value="Send" />
             </div>
@@ -131,10 +131,10 @@
             document.getElementById('getData').value = 'Sending...';
 
             var strPolicyNo = document.getElementById('txtPolicyNo').value
-            var strSaleCode = document.getElementById('txtSaleCode').value
+            //var strSaleCode = document.getElementById('txtSaleCode').value
             var strUser = document.getElementById('txtUserName').value
 
-            var url = "@Url.Action("GetLinkWSPolicy", "Home")" + "?policyNo=" + strPolicyNo + "&saleCode=" + strSaleCode + "&strUser=" + strUser + "";
+            var url = "@Url.Action("GetLinkWSPolicy", "Home")" + "?policyNo=" + strPolicyNo + "&strUser=" + strUser + "";
 
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url, true);
