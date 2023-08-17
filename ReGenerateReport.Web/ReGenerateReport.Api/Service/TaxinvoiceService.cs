@@ -76,6 +76,7 @@ namespace ReGenerateReport.Api.Service
                 return filename;
             }
         }
+
         public string TaxInvoiceVmiCopyRdlc(string yr, string brcode, string polno, string sale_code, string isOnline)
         {
             string filename = string.Empty, ls_path = string.Empty;
@@ -125,6 +126,7 @@ namespace ReGenerateReport.Api.Service
                 return filename;
             }
         }
+
         public string TaxInvoiceVmiStickerRdlc(string yr, string brcode, string polno, string sale_code, string isOnline, bool InsuranceBanner = true)
         {
             string filename = string.Empty, ls_path = string.Empty;
@@ -182,6 +184,63 @@ namespace ReGenerateReport.Api.Service
             }
         }
 
+        public string TaxinvoiceCmiRdlc(string brcode, string cmi_taxno, string sale_code, string isOnline)
+        {
+            string filename = string.Empty, ls_path = string.Empty;
+            try
+            {
+              //  DataSet ds = GetCmiTaxInvoice(cmi_taxno);
+              //  if (ds.Tables[0].Rows.Count == 0) return filename;
+              //  ds.Tables[0].Rows[0]["isOnline"] = isOnline;
+
+              //  var signature = _policyReportService.getSignature(brcode);
+              //  ds.Tables[0].Rows[0]["signature_picture"] = signature.signature_picture;
+              //  ds.Tables[0].Rows[0]["signature_fullname"] = signature.signature_fullname;
+
+              //  string deviceInfo =
+              // @"<DeviceInfo>
+              //    <OutputFormat>PDF</OutputFormat>
+              //    <EndPage>1</EndPage>
+              //</DeviceInfo>";
+
+                //Save
+                string path, mineType, encoding, filenameExtension;
+                if (isOnline == "true")
+                {
+                    ls_path = UtilityBusiness.GetTaxinvoicePath(brcode, sale_code, "ECMI");  //UtilityBusiness.GetReportRdlcPath
+                }
+                else
+                {
+                    ls_path = UtilityBusiness.GetTaxinvoicePath(brcode, sale_code, "CMI");
+                }
+
+                //string[] streamids;
+                //Warning[] warnings;
+                string encrypt_name = UtilityBusiness.MD5Hash("CMITAX" + cmi_taxno.ToString());
+                filename = encrypt_name + ".pdf";
+                path = ls_path + filename;
+                //ReportViewer rv = new ReportViewer();
+
+                //rv.ProcessingMode = ProcessingMode.Local;
+
+                //ReportDataSource rds = new ReportDataSource("CmiTaxInvoice", ds.Tables["CmiTaxInvoiceTable"]);
+                //rv.LocalReport.ReportPath = PathHelper.GetReportRdlcPath("CmiTaxInvoice.rdlc");
+                //rv.LocalReport.DataSources.Add(rds);
+                //rv.LocalReport.Refresh();
+                //byte[] bytes = rv.LocalReport.Render("PDF", deviceInfo, out mineType, out encoding, out filenameExtension, out streamids, out warnings);
+                //rv.Dispose();
+                //using (FileStream stream = new FileStream(path, FileMode.Create))
+                //{
+                //    stream.Write(bytes, 0, bytes.Length);
+                //}
+                return filename;
+            }
+            catch (Exception)
+            {
+                return filename;
+            }
+        }
+
         public DataSet GetVmiTaxInvoice(string yr, string brcode, string polno)
         {
             DataSet ds = new DataSet(); ;
@@ -203,6 +262,30 @@ namespace ReGenerateReport.Api.Service
                 using (SqlDataAdapter adap = new SqlDataAdapter(com))
                 {
                     adap.Fill(ds, "VmiTaxInvoiceTable");
+                }
+            }
+            return ds;
+        }
+
+        public DataSet GetCmiTaxInvoice(string cmi_taxno)
+        {
+            DataSet ds = new DataSet(); ;
+            string sql = "dbo.CmiTaxInvoicePrint";
+
+            string connectionString = _Configuration["ConnectionString:wscmimotordbConstr"];
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                SqlCommand com = new SqlCommand();
+                com.Connection = conn;
+                com.CommandType = CommandType.StoredProcedure;
+                com.CommandText = sql;
+
+                com.Parameters.Add(new SqlParameter("@cmi_taxno", cmi_taxno));
+
+                using (SqlDataAdapter adap = new SqlDataAdapter(com))
+                {
+                    adap.Fill(ds, "CmiTaxInvoiceTable");
                 }
             }
             return ds;

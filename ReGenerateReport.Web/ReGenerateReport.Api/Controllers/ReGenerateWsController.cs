@@ -63,39 +63,58 @@ namespace ReGenerateReport.Api.Controllers
                 string polyr = pol.polYr;
                 string polbr = pol.polBrCode;
                 string polno = pol.polNo;
-                string productClass = "5";
-                string flagOnline = "2";
-                string channel = "";
+                string saleCode = pol.saleCode.Trim();
+                string productClass = pol.productClass.Trim();
+                string flagOnline = pol.flagOnline.Trim();
+                string channel = pol.channelCode.Trim();
                 if (poltype == "VMI")
                 {
+
                     if (productClass == "5")
                     {
-                        if (req.SaleCode == "15445" || req.SaleCode == "15841" || req.SaleCode == "16184")
+                        if (saleCode == "15445" || saleCode == "15841" || saleCode == "16184")
                         {
-                            data = await _wsService.PolicyVMIType5noPrint(polyr, polbr, polno, req.SaleCode, flagOnline, productClass);
+                            data = await _wsService.PolicyVMIType5noPrint(polyr, polbr, polno, saleCode, flagOnline, productClass);
                         }
                         else
                         {
-                            data = await _wsService.PolicyVMIType5(polyr, polbr, polno, req.SaleCode, flagOnline, channel);
+                            data = await _wsService.PolicyVMIType5(polyr, polbr, polno, saleCode, flagOnline, channel);
                         }
                     }
                     else if (productClass == "2" || productClass == "3")
                     {
-                        if (req.SaleCode == "15445" || req.SaleCode == "15841" || req.SaleCode == "16184")
+                        if (saleCode == "15445" || saleCode == "15841" || saleCode == "16184")
                         {
-                            data = await _wsService.PolicyVMIType5noPrint(polyr, polbr, polno, req.SaleCode, flagOnline, productClass);
+                            data = await _wsService.PolicyVMIType5noPrint(polyr, polbr, polno, saleCode, flagOnline, productClass);
                         }
                         else
                         {
-                            data = await _wsService.PolicyVMIType3(polyr, polbr, polno, req.SaleCode, flagOnline, channel);
+                            data = await _wsService.PolicyVMIType3(polyr, polbr, polno, saleCode, flagOnline, channel);
+                        }
+                    }
+                    else if (productClass == "4")
+                    {
+                        if (saleCode == "15445" || saleCode == "15841" || saleCode == "16184")
+                        {
+                            data = await _wsService.PolicyVMIType4Copy(polyr, polbr, polno, saleCode, flagOnline, channel);
+                        }
+                        else
+                        {
+                            data = await _wsService.PolicyVMIType4(polyr, polbr, polno, saleCode, flagOnline, channel);
                         }
                     }
                 }
                 else if (poltype == "CMI")
                 {
-
+                    if (saleCode == "15841")
+                    {
+                        data = await _wsService.PolicyCMI("PolicyCMInoPrint", polyr, polbr, polno, saleCode, flagOnline, channel);
+                    }
+                    else
+                    {
+                        data = await _wsService.PolicyCMI("PolicyCMI", polyr, polbr, polno, saleCode, flagOnline, channel);
+                    }
                 }
-                
 
                 if (data == null || data.linkPolicy == null)
                 {
