@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Reporting.NETCore;
 using ReGenerateReport.Api.Helper;
 using ReGenerateReport.Api.Models;
 using System;

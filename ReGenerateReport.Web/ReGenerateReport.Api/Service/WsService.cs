@@ -97,6 +97,9 @@ namespace ReGenerateReport.Api.Service
             //Get Report Path 
             string reportPath = _Configuration["Report:reportpath"];
 
+            //Replace Name API   
+            string replaceApi = _Configuration["ProjectName"];
+
             //1. Check ข้อมูล DB ว่ามีข้อมูลไหม
             string connectionString = _Configuration["ConnectionString:wsvmimotordbConstr"];
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -157,7 +160,7 @@ namespace ReGenerateReport.Api.Service
                 }
 
                 string originalPath = _absoluteUriService.GetAbsoluteUri();  //new Uri(HttpContext.Current.Request.Url.AbsoluteUri).OriginalString;
-                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/"));
+                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/")).Replace("api", replaceApi);
 
                 string policyUrl = parentDirectory + "/report/EPolicyFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/Sign_" + filename;
                 string receiptUrl = parentDirectory + "/report/ETaxinvoiceFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/Sign_" + filename_tax;
@@ -249,7 +252,7 @@ namespace ReGenerateReport.Api.Service
                 }
 
                 string originalPath = _absoluteUriService.GetAbsoluteUri();   //new Uri(HttpContext.Current.Request.Url.AbsoluteUri).OriginalString;
-                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/"));
+                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/")).Replace("api", replaceApi);
 
                 string policyUrl = parentDirectory + "/report/PolicyFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
@@ -272,6 +275,9 @@ namespace ReGenerateReport.Api.Service
 
             //Get Report Path 
             string reportPath = _Configuration["Report:reportpath"];
+
+            //Replace Name API   
+            string replaceApi = _Configuration["ProjectName"];
 
             //1. Check ข้อมูล DB ว่ามีข้อมูลไหม
             string connectionString = _Configuration["ConnectionString:wsvmimotordbConstr"];
@@ -333,7 +339,7 @@ namespace ReGenerateReport.Api.Service
                 }
 
                 string originalPath = _absoluteUriService.GetAbsoluteUri();  //new Uri(HttpContext.Current.Request.Url.AbsoluteUri).OriginalString;
-                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/"));
+                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/")).Replace("api", replaceApi);
 
                 string policyUrl = parentDirectory + "/report/EPolicyFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/Sign_" + filename;
                 string receiptUrl = parentDirectory + "/report/ETaxinvoiceFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/Sign_" + filename_tax;
@@ -419,7 +425,7 @@ namespace ReGenerateReport.Api.Service
                 }
 
                 string originalPath = _absoluteUriService.GetAbsoluteUri();   //new Uri(HttpContext.Current.Request.Url.AbsoluteUri).OriginalString;
-                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/"));
+                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/")).Replace("api", replaceApi);
 
                 string policyUrl = parentDirectory + "/report/PolicyFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
@@ -442,6 +448,9 @@ namespace ReGenerateReport.Api.Service
 
             //Get Report Path 
             string reportPath = _Configuration["Report:reportpath"];
+
+            //Replace Name API   
+            string replaceApi = _Configuration["ProjectName"];
 
             //1. Check ข้อมูล DB ว่ามีข้อมูลไหม
             string connectionString = _Configuration["ConnectionString:wsvmimotordbConstr"];
@@ -503,7 +512,7 @@ namespace ReGenerateReport.Api.Service
                 }
 
                 string originalPath = _absoluteUriService.GetAbsoluteUri();  //new Uri(HttpContext.Current.Request.Url.AbsoluteUri).OriginalString;
-                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/"));
+                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/")).Replace("api", replaceApi);
 
                 string policyUrl = parentDirectory + "/report/PolicyFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/Sign_" + filename;
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/Sign_" + filename_tax;
@@ -584,7 +593,7 @@ namespace ReGenerateReport.Api.Service
                 }
 
                 string originalPath = _absoluteUriService.GetAbsoluteUri();   //new Uri(HttpContext.Current.Request.Url.AbsoluteUri).OriginalString;
-                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/"));
+                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/")).Replace("api", replaceApi);
 
                 string policyUrl = parentDirectory + "/report/PolicyFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
@@ -607,6 +616,9 @@ namespace ReGenerateReport.Api.Service
 
             //Get Report Path 
             string reportPath = _Configuration["Report:reportpath"];
+
+            //Replace Name API   
+            string replaceApi = _Configuration["ProjectName"];
 
             //1. Check ข้อมูล DB ว่ามีข้อมูลไหม
             string connectionString = _Configuration["ConnectionString:wsvmimotordbConstr"];
@@ -668,7 +680,7 @@ namespace ReGenerateReport.Api.Service
                 }
 
                 string originalPath = _absoluteUriService.GetAbsoluteUri();  //new Uri(HttpContext.Current.Request.Url.AbsoluteUri).OriginalString;
-                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/"));
+                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/")).Replace("api", replaceApi);
 
                 string policyUrl = parentDirectory + "/report/PolicyFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/Sign_" + filename;
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/Sign_" + filename_tax;
@@ -756,7 +768,7 @@ namespace ReGenerateReport.Api.Service
                 }
 
                 string originalPath = _absoluteUriService.GetAbsoluteUri();   //new Uri(HttpContext.Current.Request.Url.AbsoluteUri).OriginalString;
-                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/"));
+                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/")).Replace("api", replaceApi);
 
                 string policyUrl = parentDirectory + "/report/PolicyFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
@@ -779,6 +791,9 @@ namespace ReGenerateReport.Api.Service
 
             //Get Report Path 
             string reportPath = _Configuration["Report:reportpath"];
+
+            //Replace Name API   
+            string replaceApi = _Configuration["ProjectName"];
 
             //1. Check ข้อมูล DB ว่ามีข้อมูลไหม
             string connectionString = _Configuration["ConnectionString:wsvmimotordbConstr"];
@@ -840,7 +855,7 @@ namespace ReGenerateReport.Api.Service
                 }
 
                 string originalPath = _absoluteUriService.GetAbsoluteUri();  //new Uri(HttpContext.Current.Request.Url.AbsoluteUri).OriginalString;
-                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/"));
+                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/")).Replace("api", replaceApi);
 
                 string policyUrl = parentDirectory + "/report/EPolicyFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/Sign_" + filename;
                 string receiptUrl = parentDirectory + "/report/ETaxinvoiceFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/Sign_" + filename_tax;
@@ -932,7 +947,7 @@ namespace ReGenerateReport.Api.Service
                 }
 
                 string originalPath = _absoluteUriService.GetAbsoluteUri();   //new Uri(HttpContext.Current.Request.Url.AbsoluteUri).OriginalString;
-                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/"));
+                string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/")).Replace("api", replaceApi);
 
                 string policyUrl = parentDirectory + "/report/PolicyFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
@@ -960,6 +975,9 @@ namespace ReGenerateReport.Api.Service
 
             //Get Report Path 
             string reportPath = _Configuration["Report:reportpath"];
+
+            //Replace Name API   
+            string replaceApi = _Configuration["ProjectName"];
 
             //1. Check ข้อมูล DB ว่ามีข้อมูลไหม
             string connectionString = _Configuration["ConnectionString:wscmimotordbConstr"];
@@ -1088,7 +1106,7 @@ namespace ReGenerateReport.Api.Service
                     }
 
                     string originalPath = _absoluteUriService.GetAbsoluteUri();  //new Uri(HttpContext.Current.Request.Url.AbsoluteUri).OriginalString;
-                    string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/"));
+                    string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/")).Replace("api", replaceApi);
 
                     string policyUrl = parentDirectory + parentDirectory_path + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/Sign_" + filename;
                     string receiptUrl = parentDirectory + parentDirectory_path_Tax + dataYearTax + "/" + polbr + "/" + sale_code + "/" + dataMonthTax + "/" + dataDayTax + "/Sign_" + filename_tax;
@@ -1193,7 +1211,7 @@ namespace ReGenerateReport.Api.Service
                     }
 
                     string originalPath = _absoluteUriService.GetAbsoluteUri();   //new Uri(HttpContext.Current.Request.Url.AbsoluteUri).OriginalString;
-                    string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/"));
+                    string parentDirectory = originalPath.Substring(0, originalPath.LastIndexOf("/")).Replace("api", replaceApi);
 
                     string policyUrl = parentDirectory + parentDirectory_path + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
                     string receiptUrl = parentDirectory + parentDirectory_path_Tax + dataYearTax + "/" + polbr + "/" + sale_code + "/" + dataMonthTax + "/" + dataDayTax + "/" + filename_tax;
