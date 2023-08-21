@@ -5,14 +5,81 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- mobile matas-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1" />
+
     <title>@ViewData["Title"] - ReGenerateReport</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+
+    <link href="~/css/responsive.css" rel="stylesheet" />
+    <link href="~/css/jquery.mCustomScrollbar.min.css" rel="stylesheet" />
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Poppins:400,700&display=swap" rel="stylesheet" />
+
+    <link href="~/css/owl.carousel.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" media="screen" />
+
+    <link href="~/css/animate.min.css" rel="stylesheet" />
+    <link href="~/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/css/bootstrap-grid.css" rel="stylesheet" />
+    <link href="~/css/bootstrap-reboot.css" rel="stylesheet" />
+    <link href="~/css/default-skin.css" rel="stylesheet" />
+    <link href="~/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/css/icomoon.css" rel="stylesheet" />
+    <link href="~/css/jquery.fancybox.min.css" rel="stylesheet" />
+
+    <link href="~/css/jquery-ui.css" rel="stylesheet" />
+    <link href="~/css/meanmenu.css" rel="stylesheet" />
+    <link href="~/css/nice-select.css" rel="stylesheet" />
+    <link href="~/css/normalize.css" rel="stylesheet" />
+
+
+    <link href="~/css/slick.css" rel="stylesheet" />
+    <link href="~/css/style.css" rel="stylesheet" />
+
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="header_section">
+            <div class="container-fluid ">
+                <div class="row">
+                    <div class="col-sm-2 col-6">
+                        <a>
+
+                        </a>
+                    </div>
+                    <div class="col-sm-8 col-6" style="text-transform:capitalize;">
+                        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="navbar-collapse collapse" id="navbarNav" >
+                                <ul class="navbar-nav">
+                                    @if (@Configuration["Menu_ReGenerateItext"] == "true")
+                                    {
+                                        <li class="nav-item active">
+                                            <a class="nav-link text-dark" asp-action="Index">ReGenerateItext</a>
+                                        </li>
+                                    }
+                                    @if (@Configuration["Menu_WSPolicyRepair"] == "true")
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link text-dark" asp-action="WSPolicy">RepairWSPolicy</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Default">ReGenerateReport</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -21,27 +88,27 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
-                        
+
                         @if (@Configuration["Menu_ReGenerateItext"] == "true")
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">ReGenerateItext</a>
-                            </li>
-                        }
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">ReGenerateItext</a>
+                        </li>
+                        }-->
                         @*<li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>*@
-                        @if (@Configuration["Menu_WSPolicyRepair"] == "true")
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            </li>*@
+                        <!--@if (@Configuration["Menu_WSPolicyRepair"] == "true")
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="WSPolicy">RepairWSPolicy</a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="WSPolicy">RepairWSPolicy</a>
+                        </li>
                         }
-                        
+
                     </ul>
                 </div>
             </div>
-        </nav>
+        </nav>-->
     </header>
     <div class="container">
         <main role="main" class="pb-3">
