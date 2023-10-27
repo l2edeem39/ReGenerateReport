@@ -257,6 +257,36 @@ namespace ReGenerateReport.Api.Service
                 string policyUrl = parentDirectory + "/report/PolicyFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
 
+                string pathToFilePolicy = string.Empty, pathToFileTax = string.Empty;
+                pathToFilePolicy = reportPath + "/report/PolicyFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
+                pathToFileTax = reportPath + "/report/TaxinvoiceFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
+
+                //Check Policy File
+                if (File.Exists(pathToFilePolicy))
+                {
+                    //ข้อมูล Sign เรียบร้อย
+                    link.linkPolicy = policyUrl;
+                }
+                else
+                {
+                    link.StatusCode = HttpStatus.NotFound.ToString();
+                    link.Status = "Not Found Policy File PDF " + polno;
+                    return link;
+                }
+
+                //Check Tax File
+                if (File.Exists(pathToFileTax))
+                {
+                    //ข้อมูล Sign เรียบร้อย
+                    link.linkTax = receiptUrl;
+                }
+                else
+                {
+                    link.StatusCode = HttpStatus.OK.ToString();
+                    link.Status = "Not Found Tax File PDF " + polno;
+                    return link;
+                }
+
                 link.StatusCode = HttpStatus.OK.ToString();
                 link.Status = "Successfully";
                 link.linkPolicy = policyUrl;
@@ -430,6 +460,36 @@ namespace ReGenerateReport.Api.Service
                 string policyUrl = parentDirectory + "/report/PolicyFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
 
+                string pathToFilePolicy = string.Empty, pathToFileTax = string.Empty;
+                pathToFilePolicy = reportPath + "/report/PolicyFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
+                pathToFileTax = reportPath + "/report/TaxinvoiceFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
+
+                //Check Policy File
+                if (File.Exists(pathToFilePolicy))
+                {
+                    //ข้อมูล Sign เรียบร้อย
+                    link.linkPolicy = policyUrl;
+                }
+                else
+                {
+                    link.StatusCode = HttpStatus.NotFound.ToString();
+                    link.Status = "Not Found Policy File PDF " + polno;
+                    return link;
+                }
+
+                //Check Tax File
+                if (File.Exists(pathToFileTax))
+                {
+                    //ข้อมูล Sign เรียบร้อย
+                    link.linkTax = receiptUrl;
+                }
+                else
+                {
+                    link.StatusCode = HttpStatus.OK.ToString();
+                    link.Status = "Not Found Tax File PDF " + polno;
+                    return link;
+                }
+
                 link.StatusCode = HttpStatus.OK.ToString();
                 link.Status = "Successfully";
                 link.linkPolicy = policyUrl;
@@ -598,6 +658,37 @@ namespace ReGenerateReport.Api.Service
                 string policyUrl = parentDirectory + "/report/PolicyFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
 
+                string pathToFilePolicy = string.Empty, pathToFileTax = string.Empty;
+                pathToFilePolicy = reportPath + "/report/PolicyFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
+                pathToFileTax = reportPath + "/report/TaxinvoiceFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
+
+
+                //Check Policy File
+                if (File.Exists(pathToFilePolicy))
+                {
+                    //ข้อมูล Sign เรียบร้อย
+                    link.linkPolicy = policyUrl;
+                }
+                else
+                {
+                    link.StatusCode = HttpStatus.NotFound.ToString();
+                    link.Status = "Not Found Policy File PDF " + polno;
+                    return link;
+                }
+
+                //Check Tax File
+                if (File.Exists(pathToFileTax))
+                {
+                    //ข้อมูล Sign เรียบร้อย
+                    link.linkTax = receiptUrl;
+                }
+                else
+                {
+                    link.StatusCode = HttpStatus.OK.ToString();
+                    link.Status = "Not Found Tax File PDF " + polno;
+                    return link;
+                }
+
                 link.StatusCode = HttpStatus.OK.ToString();
                 link.Status = "Successfully";
                 link.linkPolicy = policyUrl;
@@ -656,11 +747,11 @@ namespace ReGenerateReport.Api.Service
             {
                 if (productClass == "5")
                 {
-                    filename = _policyReportService.VmiPolicyT5_Epol(polyr, polbr, polno, sale_code, "true", "true");
+                    filename = _policyReportService.VmiPolicyT5_Epol(polyr, polbr, polno, sale_code, "false", "true");
                 }
                 else
                 {
-                    filename = _policyReportService.VmiPolicyT3_Epol(polyr, polbr, polno, sale_code, "true", "true");
+                    filename = _policyReportService.VmiPolicyT3_Epol(polyr, polbr, polno, sale_code, "false", "true");
                 }
 
                 if (string.IsNullOrEmpty(filename))
@@ -744,11 +835,11 @@ namespace ReGenerateReport.Api.Service
             {
                 if (productClass == "5")
                 {
-                    filename = "";
+                    filename = _policyReportService.VmiPolicyT5_Epol(polyr, polbr, polno, sale_code, "false", "false");
                 }
                 else
                 {
-                    filename = "";
+                    filename = _policyReportService.VmiPolicyT3_Epol(polyr, polbr, polno, sale_code, "false", "false");
                 }
 
                 if (string.IsNullOrEmpty(filename))
@@ -758,7 +849,7 @@ namespace ReGenerateReport.Api.Service
                     return link;
                 }
 
-                filename_tax = "";
+                filename_tax = _taxinvoiceService.TaxInvoiceVmiCopyRdlc(polyr, polbr, polno, sale_code, "false");
 
                 if (string.IsNullOrEmpty(filename_tax))
                 {
@@ -772,6 +863,36 @@ namespace ReGenerateReport.Api.Service
 
                 string policyUrl = parentDirectory + "/report/PolicyFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
+
+                string pathToFilePolicy = string.Empty, pathToFileTax = string.Empty;
+                pathToFilePolicy = reportPath + "/report/PolicyFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
+                pathToFileTax = reportPath + "/report/TaxinvoiceFormVMICopy/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
+
+                //Check Policy File
+                if (File.Exists(pathToFilePolicy))
+                {
+                    //ข้อมูล Sign เรียบร้อย
+                    link.linkPolicy = policyUrl;
+                }
+                else
+                {
+                    link.StatusCode = HttpStatus.NotFound.ToString();
+                    link.Status = "Not Found Policy File PDF " + polno;
+                    return link;
+                }
+
+                //Check Tax File
+                if (File.Exists(pathToFileTax))
+                {
+                    //ข้อมูล Sign เรียบร้อย
+                    link.linkTax = receiptUrl;
+                }
+                else
+                {
+                    link.StatusCode = HttpStatus.OK.ToString();
+                    link.Status = "Not Found Tax File PDF " + polno;
+                    return link;
+                }
 
                 link.StatusCode = HttpStatus.OK.ToString();
                 link.Status = "Successfully";
@@ -952,6 +1073,36 @@ namespace ReGenerateReport.Api.Service
                 string policyUrl = parentDirectory + "/report/PolicyFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
                 string receiptUrl = parentDirectory + "/report/TaxinvoiceFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
 
+                string pathToFilePolicy = string.Empty, pathToFileTax = string.Empty;
+                pathToFilePolicy = reportPath + "/report/PolicyFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
+                pathToFileTax = reportPath + "/report/TaxinvoiceFormVMI/" + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename_tax;
+
+                //Check Policy File
+                if (File.Exists(pathToFilePolicy))
+                {
+                    //ข้อมูล Sign เรียบร้อย
+                    link.linkPolicy = policyUrl;
+                }
+                else
+                {
+                    link.StatusCode = HttpStatus.NotFound.ToString();
+                    link.Status = "Not Found Policy File PDF " + polno;
+                    return link;
+                }
+
+                //Check Tax File
+                if (File.Exists(pathToFileTax))
+                {
+                    //ข้อมูล Sign เรียบร้อย
+                    link.linkTax = receiptUrl;
+                }
+                else
+                {
+                    link.StatusCode = HttpStatus.OK.ToString();
+                    link.Status = "Not Found Tax File PDF " + polno;
+                    return link;
+                }
+
                 link.StatusCode = HttpStatus.OK.ToString();
                 link.Status = "Successfully";
                 link.linkPolicy = policyUrl;
@@ -995,11 +1146,19 @@ namespace ReGenerateReport.Api.Service
             // Check ข้อมูล Tax
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                var dataTaxno = connection.QueryFirst<string>($"select cmi_taxno from cmi_taxinvoice where yr = '{polyr}' and br_code = '{polbr}' and pol_no = '{polno}'");
-                if (dataTaxno != null)
+                try
                 {
-                    cmi_taxno = dataTaxno;
+                    var dataTaxno = connection.QueryFirst<string>($"select cmi_taxno from cmi_taxinvoice where yr = '{polyr}' and br_code = '{polbr}' and pol_no = '{polno}'");
+                    if (dataTaxno != null)
+                    {
+                        cmi_taxno = dataTaxno;
+                    }
                 }
+                catch (Exception)
+                {
+                    
+                }
+                
             }
 
             //Get Day Month Year Policy
@@ -1021,17 +1180,25 @@ namespace ReGenerateReport.Api.Service
             //Get Day Month Year Tax
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                var dataDateTax = connection.QueryFirst($"SELECT RIGHT(CONVERT(VARCHAR(4), YEAR(DATEADD(YEAR,543,req_date))),2) as datayear, " +
+                try
+                {
+                    var dataDateTax = connection.QueryFirst($"SELECT RIGHT(CONVERT(VARCHAR(4), YEAR(DATEADD(YEAR,543,req_date))),2) as datayear, " +
                                                               $" RIGHT('0'+CONVERT(VARCHAR(2),MONTH(DATEADD(YEAR,543,req_date))),2) as datamonth, " +
                                                               $" RIGHT('0'+CONVERT(VARCHAR(2),DAY(DATEADD(YEAR,543,req_date))),2) as dataday" +
                                                               $" FROM cmi_taxinvoice " +
                                                               $" WHERE yr = '{polyr}' and br_code = '{polbr}' and pol_no = '{polno}'");
-                if (dataDateTax != "")
-                {
-                    dataYearTax = $"{dataDateTax.datayear}";
-                    dataMonthTax = $"{dataDateTax.datamonth}";
-                    dataDayTax = $"{dataDateTax.dataday}";
+                    if (dataDateTax != "")
+                    {
+                        dataYearTax = $"{dataDateTax.datayear}";
+                        dataMonthTax = $"{dataDateTax.datamonth}";
+                        dataDayTax = $"{dataDateTax.dataday}";
+                    }
                 }
+                catch (Exception)
+                {
+
+                }
+                
             }
 
             var filename = string.Empty;
@@ -1215,6 +1382,36 @@ namespace ReGenerateReport.Api.Service
 
                     string policyUrl = parentDirectory + parentDirectory_path + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
                     string receiptUrl = parentDirectory + parentDirectory_path_Tax + dataYearTax + "/" + polbr + "/" + sale_code + "/" + dataMonthTax + "/" + dataDayTax + "/" + filename_tax;
+
+                    string pathToFilePolicy = string.Empty, pathToFileTax = string.Empty;
+                    pathToFilePolicy = reportPath + parentDirectory_path + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonth + "/" + dataDay + "/" + filename;
+                    pathToFileTax = reportPath + parentDirectory_path + dataYear + "/" + polbr + "/" + sale_code + "/" + dataMonthTax + "/" + dataDayTax + "/" + filename_tax;
+
+                    //Check Policy File
+                    if (File.Exists(pathToFilePolicy))
+                    {
+                        //ข้อมูล Sign เรียบร้อย
+                        link.linkPolicy = policyUrl;
+                    }
+                    else
+                    {
+                        link.StatusCode = HttpStatus.NotFound.ToString();
+                        link.Status = "Not Found Policy File PDF " + polno;
+                        return link;
+                    }
+
+                    //Check Tax File
+                    if (File.Exists(pathToFileTax))
+                    {
+                        //ข้อมูล Sign เรียบร้อย
+                        link.linkTax = receiptUrl;
+                    }
+                    else
+                    {
+                        link.StatusCode = HttpStatus.OK.ToString();
+                        link.Status = "Not Found Tax File PDF " + polno;
+                        return link;
+                    }
 
                     link.StatusCode = HttpStatus.OK.ToString();
                     link.Status = "Successfully";

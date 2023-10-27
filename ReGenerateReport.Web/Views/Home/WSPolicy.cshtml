@@ -134,6 +134,9 @@
 
             var url = "@Url.Action("GetLinkWSPolicy", "Home")" + "?policyNo=" + strPolicyNo + "&strUser=" + strUser + "";
 
+            document.getElementById("txtLinkPolicy").innerText = "";
+            document.getElementById("txtLinkTax").innerText = "";
+
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url, true);
 
